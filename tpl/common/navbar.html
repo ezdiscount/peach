@@ -1,0 +1,47 @@
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+        <ul class="nav">
+            <li class="nav-item"><a class="nav-link" href="{{@BASE}}/">{{@dict['nav_index']}}</a></li>
+        </ul>
+        <ul class="nav">
+            <li class="nav-item"><a id="logout" class="nav-link" href="javascript:void(0)">{{@dict['nav_logout']}}</a></li>
+        </ul>
+    </div>
+</nav>
+<include href="common/modal.html"/>
+<script>
+    $(function () {
+        var context = getContext();
+        $("nav a").each(function () {
+            if ($(this).attr("href").toLowerCase() === context) {
+                $(this).removeAttr("href");
+                $(this).parent().addClass("disabled");
+                return false;
+            }
+        });
+        $("#logout").on("click", function () {
+            var logoutModal = $("#default-modal");
+            var logoutConfirm = $("#default-modal-confirm");
+            logoutModal.find(".modal-title").text("{{@dict['modal_title_logout']}}");
+            logoutModal.find(".modal-body").html("<p>{{@dict['modal_text_logout']}}</p>");
+            logoutConfirm.off("click");
+            logoutConfirm.on("click", function () {
+                location.href = "{{@BASE}}/Logout";
+            });
+            logoutModal.modal();
+        });
+    });
+
+    function getContext() {
+        var base = "{{@BASE}}";
+        var server = location.protocol + "//" + location.host + base;
+        var context = location.href.substr(server.length);
+        if (context.indexOf("?") !== -1) {
+            context = context.substr(0, context.indexOf("?"));
+        }
+        if (context.indexOf("#") !== -1) {
+            context = context.substr(0, context.indexOf("#"));
+        }
+        return context.toLowerCase();
+    }
+</script>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="html/index.php" colors="true">
+    <testsuites>
+        <testsuite name="Database">
+            <directory suffix="Test.php">test/db</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

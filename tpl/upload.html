@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{@dict['upload']['title']}}</title>
+    <include href="common/header.html"/>
+    <style>
+        form {
+            margin: 50px auto;
+        }
+        .form-control {
+            margin: 25px auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <form id="upload-form">
+        <input id="upload-file" class="form-control" type="file" name="upload-test"/>
+        <button class="btn btn-primary put" type="button">PUT</button>
+        <button class="btn btn-primary post" type="button">POST</button>
+    </form>
+    <table class="table"></table>
+</div>
+<script>
+    $(function () {
+        $("button.put").on("click", put);
+        $("button.post").on("click", post);
+    });
+
+    function put() {
+        var file = fileInfo(document.getElementById("upload-file"));
+        if (!file) {
+            alert("{{@dict['upload']['file_required']}}");
+            return;
+        }
+        $.ajax({
+            url: "{{@base}}/upload/" + file.name,
+            type: "PUT",
+            cache: false,
+            data: file,
+            contentType: false,
+            processData: false,
+            beforeSend: function () {
+                console.log("PUT ... " + file.name);
+                $("button.put").attr("disabled", "disabled");
+            }
+        }).done(function (data, textStatus, jqXHR) {
+            console.log(data, textStatus, jqXHR);
+            showResult('PUT', file.name);
+        }).fail(console.log)
+          .always(function () {
+            $("button.put").removeAttr("disabled");
+        })
+    }
+
+    function post() {
+        var file = fileInfo(document.getElementById("upload-file"));
+        if (!file) {
+            alert("{{@dict['upload']['file_required']}}");
+            return;
+        }
+        var formData = new FormData();
+        formData.set("enctype", "multipart/form-data");
+        formData.append("file", file);
+        $.ajax({
+            url: "{{@base}}/upload/",
+            type: "POST",
+            cache: false,
+            data: formData,
+            contentType: false,
+            processData: false,
+            beforeSend: function () {
+                console.log("POST ... " + file.name);
+                $("button.post").attr("disabled", "disabled");
+            }
+        }).done(function (data, textStatus, jqXHR) {
+            console.log(data, textStatus, jqXHR);
+            showResult('POST', file.name);
+        }).fail(console.log)
+          .always(function () {
+            $("button.post").removeAttr("disabled");
+        })
+    }
+
+    function showResult(method, filename) {
+        $(".table").append('<tr><td>' + method + '</td><td><a href="{{@base}}/upload/' + filename + '" target="_blank">' + filename + '</a></td></tr>');
+    }
+</script>
+</body>
+</html>

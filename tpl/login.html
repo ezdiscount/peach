@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{@dict['login_title']}}</title>
+    <include href="common/header.html"/>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .input {
+            margin: 1rem auto;
+        }
+        .input>span {
+            width: 80px;
+            padding-right: 1rem;
+            display: inline-block;
+            text-align: right;
+        }
+        .input>input {
+            width: 200px;
+        }
+        .btn-group {
+            margin: 10px auto;
+            display: flex;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+<div class="login">
+    <div class="input"><span>{{@dict['login_username']}}</span><input id="username" name="username" type="text"/></div>
+    <div class="input"><span>{{@dict['login_password']}}</span><input id="password" name="password" type="password"/></div>
+    <div class="btn-group">
+        <button id="login-reset" class="btn btn-outline-primary">{{@dict['login_reset']}}</button>
+        <button id="login-submit" class="btn btn-outline-primary">{{@dict['login_confirm']}}</button>
+    </div>
+</div>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.6.0/js/md5.min.js"></script>
+<script>
+    $(function () {
+        var usernameInput = $("#username");
+        var passwordInput = $("#password");
+        $("#login-reset").on("click", function () {
+            usernameInput.val("");
+            passwordInput.val("")
+        });
+        $("#login-submit").on("click", function () {
+            var username = usernameInput.val().trim();
+            var password = passwordInput.val().trim();
+            if (!username) {
+                alert("{{@dict['login_username_required']}}");
+                return usernameInput.focus();
+            } else if (!password) {
+                alert("{{@dict['login_password_required']}}");
+                return passwordInput.focus();
+            }
+            $(this).attr("disabled", "disabled");
+            $.post(location.href, {username: username, password: md5(password)})
+                .done(function (data, textStatus, jqXHR) {
+                    console.log(data);
+                    var json = isJsonString(data);
+                    if (!!json) {
+                        if (!json.error || json.error.code === 0) {
+                            location.href = getCookie("target");
+                            return;
+                        }
+                    }
+                    alert(textStatus);
+                    console.error(textStatus, jqXHR);
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    alert(textStatus);
+                    console.error(textStatus, jqXHR, errorThrown);
+                })
+                .complete(function (jqXHR, textStatus ) {
+                    $("#login-submit").removeAttr("disabled");
+                })
+        });
+    });
+</script>
+</body>
+</html>

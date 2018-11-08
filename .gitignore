@@ -1,0 +1,8 @@
+/runtime
+/vendor
+/composer.lock
+/cfg/debug.ini
+/html/php.ini
+
+# large files
+SourceHanSansSC-Normal.otf
