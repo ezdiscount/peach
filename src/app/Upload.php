@@ -2,24 +2,32 @@
 
 namespace app;
 
+use app\common\AppHelper;
+
 class Upload extends \Web
 {
+    use AppHelper;
+
     private $fileName;
 
     function beforeRoute($f3)
     {
-        $f3->LOGGER->write($f3->VERB . ' ' . $f3->REALM);
-        if ($f3->GET['name']) {
-            $this->fileName = $f3->GET['name'];
+        if (!$this->auth($f3)) {
+            $f3->reroute($this->url('/Login'));
         } else {
-            $start = strpos($f3->URI, '/upload/');
-            if ($start !== false) {
-                $start += strlen('/upload/');
-                $end = strpos($f3->URI, '?');
-                if ($end === false) {
-                    $end = strlen($f3->URI);
+            $f3->LOGGER->write($f3->VERB . ' ' . $f3->REALM);
+            if ($f3->GET['name']) {
+                $this->fileName = $f3->GET['name'];
+            } else {
+                $start = strpos($f3->URI, '/upload/');
+                if ($start !== false) {
+                    $start += strlen('/upload/');
+                    $end = strpos($f3->URI, '?');
+                    if ($end === false) {
+                        $end = strlen($f3->URI);
+                    }
+                    $this->fileName = urldecode(substr($f3->URI, $start, $end));
                 }
-                $this->fileName = urldecode(substr($f3->URI, $start, $end));
             }
         }
     }
