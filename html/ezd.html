@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EZDiscount</title>
+<link rel="icon" href="img/ezdiscount.jpg"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+<link rel="stylesheet" href="js/dropload/dropload.css"/>
+<style>
+    #wrapper {
+        padding: 5px;
+    }
+    .col-6 {
+        padding: 3px;
+    }
+    .card {
+        border-radius: 0;
+        font-size: 0.9rem;
+    }
+    .card-img-top {
+        border-radius: 0;
+    }
+    .card-body {
+        padding-top: 0;
+        padding-bottom: 0.5rem;
+        padding-left: 0.5rem;
+    }
+    .card-text {
+        margin-top: 1.25rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.7rem;
+    }
+    span.reserve-price {
+        font-size: 0.7rem;
+        text-decoration-line: line-through;
+    }
+</style>
+</head>
+<body>
+<div id="wrapper" class="container-fluid">
+    <div id="content" class="container-fluid"></div>
+</div>
+<script src="js/common.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.14.4/umd/popper.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+<script src="js/dropload/dropload.min.js"></script>
+<script>
+    window.apiUrl = "test/Feed";
+    $(function () {
+        $.ajax({
+            type: "GET",
+            url: apiUrl,
+        }).done(function (data, textStatus, jqXHR) {
+            var json = isJsonString(data);
+            if (!!json) {
+                render(json);
+                var height = $("#content").height();
+                console.log("height", height);
+                $("#wrapper").dropload({
+                    autoLoad: false,
+                    distance: 100,
+                    scrollArea: window,
+                    threshold: 0,
+                    loadUpFn: function (me) {
+                        console.log("load up ...");
+                        me.resetload();
+                        location.reload(true);
+                    },
+                    loadDownFn: function(me){
+                        console.log("load down ...");
+                        $.ajax({
+                            type: "GET",
+                            url: apiUrl,
+                        }).done(function (data, textStatus, jqXHR) {
+                            var json = isJsonString(data);
+                            if (!!json) {
+                                render(json);
+                            } else {
+                                console.log(data, textStatus, jqXHR);
+                            }
+                            me.resetload();
+                        }).fail(ajaxErrorLog)
+                    }
+                });
+            } else {
+                alert(textStatus);
+            }
+        }).fail(ajaxErrorLog);
+    });
+
+    function render(data) {
+        var i, col = 2;
+        for (i = 0; i < data.length; i++) {
+            if (!(i % col)) {
+                $("#content").append('<div class="row"></div>');
+            }
+            $(".row:last-of-type").append(
+                '<div class="col-6"><div class="card" onclick="location.href=\'' + data[i].url + '\'">' +
+                '<img class="card-img-top" src="' + data[i].thumb + '"/>' +
+                '<div class="card-body"><p class="card-text">' + data[i].title + '</p></div>' +
+                '<div class="card-body text-danger"><span class="coupon"><i class="fa fa-gift">&nbsp;</i>' + data[i].coupon + '</span></div>' +
+                '<div class="card-body text-primary">' + data[i].price + '&nbsp;<span class="text-muted reserve-price">' + data[i].reservePrice + '</span></div>' +
+                '</div></div>'
+            );
+        }
+    }
+
+    function ajaxErrorLog(jqXHR, textStatus, errorThrown) {
+        console.log(jqXHR, textStatus, errorThrown);
+    }
+</script>
+</body>
+</html>
