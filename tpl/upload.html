@@ -4,7 +4,7 @@
     <title>{{@dict['upload']['title']}}</title>
     <include href="common/header.html"/>
     <style>
-        form {
+        .container {
             margin: 50px auto;
         }
         .form-control {
@@ -14,6 +14,7 @@
 </head>
 <body>
 <div class="container">
+    <img class="img-fluid" src="{{@base}}/img/data_format.png">
     <form id="upload-form">
         <input id="upload-file" class="form-control" type="file" name="upload-test"/>
         <button class="btn btn-primary put" type="button">PUT</button>
@@ -27,11 +28,20 @@
         $("button.post").on("click", post);
     });
 
+    function validateUploadFileSize(file) {
+        console.log(file);
+        return !!file && !!file.size && file.size < 1024000;
+    }
+
     function put() {
         var file = fileInfo(document.getElementById("upload-file"));
         if (!file) {
             alert("{{@dict['upload']['file_required']}}");
-            return;
+            return false;
+        }
+        if (!validateUploadFileSize(file)) {
+            alert("文件过大");
+            return false;
         }
         $.ajax({
             url: "{{@base}}/upload/" + file.name,
@@ -42,25 +52,27 @@
             processData: false,
             beforeSend: function () {
                 console.log("PUT ... " + file.name);
-                $("button.put").attr("disabled", "disabled");
+                disableUpload();
             }
         }).done(function (data, textStatus, jqXHR) {
             console.log(data, textStatus, jqXHR);
             showResult('PUT', file.name);
-        }).fail(console.log)
-          .always(function () {
-            $("button.put").removeAttr("disabled");
-        })
+        }).fail(console.log).always(enableUpload);
     }
 
     function post() {
         var file = fileInfo(document.getElementById("upload-file"));
         if (!file) {
             alert("{{@dict['upload']['file_required']}}");
-            return;
+            return false;
+        }
+        if (!validateUploadFileSize(file)) {
+            alert("文件过大");
+            return false;
         }
         var formData = new FormData();
         formData.set("enctype", "multipart/form-data");
+        formData.append("name", file.name);
         formData.append("file", file);
         $.ajax({
             url: "{{@base}}/upload/",
@@ -71,19 +83,26 @@
             processData: false,
             beforeSend: function () {
                 console.log("POST ... " + file.name);
-                $("button.post").attr("disabled", "disabled");
+                disableUpload();
             }
         }).done(function (data, textStatus, jqXHR) {
             console.log(data, textStatus, jqXHR);
             showResult('POST', file.name);
-        }).fail(console.log)
-          .always(function () {
-            $("button.post").removeAttr("disabled");
-        })
+        }).fail(console.log).always(enableUpload);
     }
 
     function showResult(method, filename) {
         $(".table").append('<tr><td>' + method + '</td><td><a href="{{@base}}/upload/' + filename + '" target="_blank">' + filename + '</a></td></tr>');
+    }
+
+    function disableUpload() {
+        $("button.post").attr("disabled", "disabled");
+        $("button.put").attr("disabled", "disabled");
+    }
+
+    function enableUpload() {
+        $("button.post").removeAttr("disabled");
+        $("button.put").removeAttr("disabled");
     }
 </script>
 </body>

@@ -3,6 +3,8 @@
 namespace app;
 
 use app\common\AppHelper;
+use PhpOffice\PhpSpreadsheet\Exception;
+use service\ExcelDataParser;
 
 class Upload extends \Web
 {
@@ -16,8 +18,8 @@ class Upload extends \Web
             $f3->reroute($this->url('/Login'));
         } else {
             $f3->LOGGER->write($f3->VERB . ' ' . $f3->REALM);
-            if ($f3->GET['name']) {
-                $this->fileName = $f3->GET['name'];
+            if ($f3->POST['name']) {
+                $this->fileName = $f3->POST['name'];
             } else {
                 $start = strpos($f3->URI, '/upload/');
                 if ($start !== false) {
@@ -49,6 +51,15 @@ class Upload extends \Web
     function upload($f3)
     {
         $receive = $this->receive(null, true, false);
-        var_dump($receive);
+        if ($receive) {
+            try {
+                ExcelDataParser::parse($f3->UPLOADS . $this->fileName);
+                echo "success";
+            } catch (Exception $e) {
+                var_dump($e);
+            }
+        } else {
+            echo "failure";
+        }
     }
 }
