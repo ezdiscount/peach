@@ -19,8 +19,16 @@
         border-radius: 0;
         font-size: 0.9rem;
     }
-    .card-img-top {
-        border-radius: 0;
+    .card-thumb {
+        width: 100%;
+        height: 0;
+        padding-bottom: 100%;
+        position: relative;
+    }
+    .card-thumb img {
+        width: 100%;
+        height: 100%;
+        position: absolute;
     }
     .card-body {
         padding-top: 0;
@@ -28,7 +36,7 @@
         padding-left: 0.5rem;
     }
     .card-text {
-        margin-top: 1.25rem;
+        margin-top: 1rem;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
@@ -39,6 +47,12 @@
     span.reserve-price {
         font-size: 0.7rem;
         text-decoration-line: line-through;
+    }
+    .text-price {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        background-color: #dc3545;
+        color: white;
     }
 </style>
 </head>
@@ -128,10 +142,10 @@
             }
             $(".row:last-of-type").append(
                 '<div class="col-6"><div class="card" onclick="location.href=\'' + data[i].url + '\'">' +
-                '<img class="card-img-top" src="' + data[i].thumb + '"/>' +
+                '<div class="card-thumb"><img src="' + data[i].thumb + '"/></div>' +
                 '<div class="card-body"><p class="card-text">' + data[i].title + '</p></div>' +
                 '<div class="card-body text-danger"><span class="coupon"><i class="fa fa-gift">&nbsp;</i>' + data[i].coupon + '</span></div>' +
-                '<div class="card-body text-primary">' + data[i].price + '&nbsp;<span class="text-muted reserve-price">' + data[i].reservePrice + '</span></div>' +
+                '<div class="card-body text-price">' + data[i].price + '&nbsp;<span class="text-muted reserve-price">' + data[i].reservePrice + '</span></div>' +
                 '</div></div>'
             );
         }
