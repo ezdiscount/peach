@@ -3,12 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <title>EZDiscount</title>
-<link rel="icon" href="img/ezdiscount.jpg"/>
+<link rel="icon" href="img/ezd_icon.png"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
 <link rel="stylesheet" href="js/dropload/dropload.css"/>
 <style>
+    .ezd-info {
+        top: 0;
+        background-color: #dd3b2f;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        color: white;
+        font-size: 0.9rem;
+        padding-bottom: 0.8rem;
+    }
+    i.fa-wechat + span {
+        margin-right: 1rem;
+    }
+    i.fa-facebook {
+        margin-left: 1rem;
+    }
     #wrapper {
         padding: 5px;
     }
@@ -48,19 +64,25 @@
         color: gray;
         text-decoration-line: line-through;
     }
+    .text-coupon {
+        color: #dd3b2f;
+    }
     .text-price {
         padding-top: 0.5rem;
         padding-bottom: 0.5rem;
-        background-color: #dc3545;
+        background-color: #dd3b2f;
         color: white;
         font-size: 1rem;
     }
 </style>
 </head>
 <body>
-<div id="top-recommend" class="carousel slide">
-    <ol class="carousel-indicators"></ol>
-    <div class="carousel-inner"></div>
+<div class="top">
+    <img class="img-fluid" src="img/ezd_landscape.png">
+    <div class="ezd-info">
+        <div><i class="fa fa-wechat">&nbsp;</i><span>123456789</span></div>
+        <div><i class="fa fa-facebook">&nbsp;</i><span>123456789</span></div>
+    </div>
 </div>
 <div id="wrapper" class="container-fluid">
     <div id="content" class="container-fluid"></div>
@@ -72,29 +94,8 @@
 <script src="js/dropload/dropload.min.js"></script>
 <script>
     window.pageNo = 1;
-    window.carouselUrl = "test/carousel";
     window.dataUrl = "test/sample/";
     $(function () {
-        $.ajax({
-            type: "GET",
-            url: carouselUrl,
-        }).done(function (data) {
-            var json = isJsonString(data);
-            if (json.length > 0) {
-                var indicatorHtml = '<li data-target="#top-recommend" data-slide-to="0" class="active"></li>';
-                var itemHtml = '<div class="carousel-item active"><img class="d-block w-100" src="' + json[0].thumb + '"></div>';
-                for (i = 1; i < json.length; i++) {
-                    indicatorHtml += '<li data-target="#top-recommend" data-slide-to="' + i + '"></li>';
-                    itemHtml += '<div class="carousel-item"><img class="d-block w-100" src="' + json[i].thumb + '"></div>';
-                }
-                $("#top-recommend .carousel-indicators").append(indicatorHtml);
-                $("#top-recommend .carousel-inner").append(itemHtml);
-                $(".carousel").carousel({
-                    interval: 3000
-                });
-            }
-        });
-
         $.ajax({
             type: "GET",
             url: dataUrl + pageNo,
@@ -151,7 +152,7 @@
                     '<div class="col-6"><div class="card" onclick="location.href=\'' + data[i].url + '\'">' +
                     '<div class="card-thumb"><img src="' + data[i].thumb + '"/></div>' +
                     '<div class="card-body"><p class="card-text">' + data[i].title + '</p></div>' +
-                    '<div class="card-body text-danger"><span class="coupon"><i class="fa fa-gift">&nbsp;</i>' + data[i].coupon + '</span></div>' +
+                    '<div class="card-body text-coupon"><span class="coupon"><i class="fa fa-gift">&nbsp;</i>' + data[i].coupon + '</span></div>' +
                     '<div class="card-body text-price">￥' + data[i].price + '&nbsp;<span class="reserve-price">' + data[i].reservePrice + '</span></div>' +
                     '</div></div>'
                 );
