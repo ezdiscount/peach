@@ -38,14 +38,14 @@
     .card-text {
         margin-top: 1rem;
         display: -webkit-box;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: 0.7rem;
     }
     span.reserve-price {
-        font-size: 0.7rem;
+        color: gray;
         text-decoration-line: line-through;
     }
     .text-price {
@@ -53,6 +53,7 @@
         padding-bottom: 0.5rem;
         background-color: #dc3545;
         color: white;
+        font-size: 1rem;
     }
 </style>
 </head>
@@ -105,7 +106,7 @@
                 console.log("height", height);
                 $("#wrapper").dropload({
                     autoLoad: false,
-                    distance: 100,
+                    distance: 50,
                     scrollArea: window,
                     threshold: 0,
                     loadUpFn: function (me) {
@@ -151,7 +152,7 @@
                     '<div class="card-thumb"><img src="' + data[i].thumb + '"/></div>' +
                     '<div class="card-body"><p class="card-text">' + data[i].title + '</p></div>' +
                     '<div class="card-body text-danger"><span class="coupon"><i class="fa fa-gift">&nbsp;</i>' + data[i].coupon + '</span></div>' +
-                    '<div class="card-body text-price">' + data[i].price + '&nbsp;<span class="text-muted reserve-price">' + data[i].reservePrice + '</span></div>' +
+                    '<div class="card-body text-price">￥' + data[i].price + '&nbsp;<span class="reserve-price">' + data[i].reservePrice + '</span></div>' +
                     '</div></div>'
                 );
             }
