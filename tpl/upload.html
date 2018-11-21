@@ -75,7 +75,7 @@
         formData.append("name", file.name);
         formData.append("file", file);
         $.ajax({
-            url: "{{@base}}/upload/",
+            url: "{{@base}}/Upload/",
             type: "POST",
             cache: false,
             data: formData,
@@ -92,7 +92,7 @@
     }
 
     function showResult(method, filename) {
-        $(".table").append('<tr><td>' + method + '</td><td><a href="{{@base}}/upload/' + filename + '" target="_blank">' + filename + '</a></td></tr>');
+        $(".table").append('<tr><td>' + method + '</td><td><a href="{{@base}}/Upload/' + filename + '" target="_blank">' + filename + '</a></td></tr>');
     }
 
     function disableUpload() {
