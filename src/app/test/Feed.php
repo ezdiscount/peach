@@ -2,6 +2,8 @@
 
 namespace app\test;
 
+use service\ProductRawData;
+
 class Feed
 {
     const CAROUSEL = [
@@ -107,5 +109,21 @@ class Feed
     function sample()
     {
         echo json_encode(self::SAMPLE, JSON_UNESCAPED_UNICODE);
+    }
+
+    function pagination($f3, $args)
+    {
+        $pageNo = intval($args['pageNo']) ?? 0;
+        $pageSize = 10;
+        $raw = json_decode(file_get_contents(ProductRawData::RAW));
+        $pageTotal = ceil(count($raw) / 10);
+        if ($pageNo >= 1 && $pageNo <= $pageTotal) {
+            $chunk = array_chunk($raw, $pageSize);
+            $data = $chunk[$pageNo - 1];
+        } else {
+            $f3->LOGGER->write("request page $pageNo: no data");
+            $data = [];
+        }
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 }

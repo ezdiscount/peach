@@ -70,8 +70,9 @@
 <script src="https://cdn.bootcss.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 <script src="js/dropload/dropload.min.js"></script>
 <script>
+    window.pageNo = 1;
     window.carouselUrl = "test/carousel";
-    window.dataUrl = "test/sample";
+    window.dataUrl = "test/sample/";
     $(function () {
         $.ajax({
             type: "GET",
@@ -95,7 +96,7 @@
 
         $.ajax({
             type: "GET",
-            url: dataUrl,
+            url: dataUrl + pageNo,
         }).done(function (data, textStatus, jqXHR) {
             var json = isJsonString(data);
             if (!!json) {
@@ -116,7 +117,7 @@
                         console.log("load down ...");
                         $.ajax({
                             type: "GET",
-                            url: dataUrl,
+                            url: dataUrl + pageNo,
                         }).done(function (data, textStatus, jqXHR) {
                             var json = isJsonString(data);
                             if (!!json) {
@@ -125,6 +126,10 @@
                                 console.log(data, textStatus, jqXHR);
                             }
                             me.resetload();
+                            if (json.length === 0) {
+                                me.unlock();
+                                me.noData(true);
+                            }
                         }).fail(ajaxErrorLog)
                     }
                 });
@@ -136,18 +141,21 @@
 
     function render(data) {
         var i, col = 2;
-        for (i = 0; i < data.length; i++) {
-            if (!(i % col)) {
-                $("#content").append('<div class="row"></div>');
+        if (data.length != 0) {
+            for (i = 0; i < data.length; i++) {
+                if (!(i % col)) {
+                    $("#content").append('<div class="row"></div>');
+                }
+                $(".row:last-of-type").append(
+                    '<div class="col-6"><div class="card" onclick="location.href=\'' + data[i].url + '\'">' +
+                    '<div class="card-thumb"><img src="' + data[i].thumb + '"/></div>' +
+                    '<div class="card-body"><p class="card-text">' + data[i].title + '</p></div>' +
+                    '<div class="card-body text-danger"><span class="coupon"><i class="fa fa-gift">&nbsp;</i>' + data[i].coupon + '</span></div>' +
+                    '<div class="card-body text-price">' + data[i].price + '&nbsp;<span class="text-muted reserve-price">' + data[i].reservePrice + '</span></div>' +
+                    '</div></div>'
+                );
             }
-            $(".row:last-of-type").append(
-                '<div class="col-6"><div class="card" onclick="location.href=\'' + data[i].url + '\'">' +
-                '<div class="card-thumb"><img src="' + data[i].thumb + '"/></div>' +
-                '<div class="card-body"><p class="card-text">' + data[i].title + '</p></div>' +
-                '<div class="card-body text-danger"><span class="coupon"><i class="fa fa-gift">&nbsp;</i>' + data[i].coupon + '</span></div>' +
-                '<div class="card-body text-price">' + data[i].price + '&nbsp;<span class="text-muted reserve-price">' + data[i].reservePrice + '</span></div>' +
-                '</div></div>'
-            );
+            pageNo ++;
         }
     }
 

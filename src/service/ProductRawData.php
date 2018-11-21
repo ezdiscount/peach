@@ -8,6 +8,7 @@ use PhpOffice\PhpSpreadsheet\Reader\Xls;
 
 class ProductRawData
 {
+    const RAW = RUNTIME . '/raw.json';
     const HEADER = [
         '0' => 'tid',
         '1' => 'info',
@@ -37,7 +38,6 @@ class ProductRawData
         '25' => 'groupStart',
         '26' => 'groupEnd',
     ];
-
     const RAW_HEADER = [
         '0' => '商品id',
         '1' => '商品名称',
@@ -91,19 +91,7 @@ class ProductRawData
         $raw = $spreadsheet->getActiveSheet()->toArray();
         if (self::RAW_HEADER === $raw[0]) {
             unset($raw[0]);
-            $header = array_flip(self::HEADER);
-            foreach ($raw as $row) {
-                $price = self::calcPriceWithCoupon($row[$header['price']], $row[$header['couponValue']]);
-                $item = [
-                    'thumb' => $row[$header['thumb']] . '_640x0q85s150_.webp',
-                    'title' => $row[$header['info']],
-                    'reservePrice' => $price[0],
-                    'coupon' => $price[1],
-                    'price' => $price[2],
-                    'url' => $row[$header['couponShortUrl']],
-                ];
-                $logger->write(json_encode($item, JSON_UNESCAPED_UNICODE));
-            }
+            self::raw2File($raw);
         } else {
             ob_start();
             var_dump($raw[0]);
@@ -111,6 +99,32 @@ class ProductRawData
             $logger->write(ob_get_clean());
         }
         return true;
+    }
+
+    static function raw2File($raw)
+    {
+        $content = '[';
+        $header = array_flip(self::HEADER);
+        foreach ($raw as $row) {
+            $price = self::calcPriceWithCoupon($row[$header['price']], $row[$header['couponValue']]);
+            $item = [
+                'thumb' => $row[$header['thumb']] . '_640x0q85s150_.webp',
+                'title' => $row[$header['info']],
+                'reservePrice' => $price[0],
+                'coupon' => $price[1],
+                'price' => $price[2],
+                'url' => $row[$header['couponShortUrl']],
+            ];
+            $content .= json_encode($item, JSON_UNESCAPED_UNICODE);
+            $content .= ',';
+        }
+        $i = strrpos($content, ',');
+        if ($i === false) {
+            $content .= ']';
+        } else {
+            $content = substr($content, 0, $i) . ']';
+        }
+        file_put_contents(self::RAW, $content,LOCK_EX);
     }
 
     /**
