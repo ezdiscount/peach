@@ -4,7 +4,7 @@ namespace app;
 
 use app\common\AppHelper;
 use PhpOffice\PhpSpreadsheet\Exception;
-use service\ExcelDataParser;
+use service\ProductRawData;
 
 class Upload extends \Web
 {
@@ -53,7 +53,7 @@ class Upload extends \Web
         $receive = $this->receive(null, true, false);
         if ($receive) {
             try {
-                ExcelDataParser::parse($f3->UPLOADS . $this->fileName);
+                ProductRawData::parse($f3->UPLOADS . $this->fileName);
                 echo "success";
             } catch (Exception $e) {
                 var_dump($e);

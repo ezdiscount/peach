@@ -6,18 +6,18 @@ use Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
 
-class ExcelDataParser
+class ProductRawData
 {
     const HEADER = [
-        '0' => 'id',
-        '1' => 'name',
+        '0' => 'tid',
+        '1' => 'info',
         '2' => 'thumb',
-        '3' => 'detail',
+        '3' => 'detailUrl',
         '4' => 'store',
         '5' => 'price',
-        '6' => 'volume',
-        '7' => 'returnRate',
-        '8' => 'returnValue',
+        '6' => 'salesVolume',
+        '7' => 'commissionRate',
+        '8' => 'commissionValue',
         '9' => 'sellerWaWa',
         '10' => 'tkShortUrl',
         '11' => 'tkUrl',
@@ -31,9 +31,9 @@ class ExcelDataParser
         '19' => 'couponCode',
         '20' => 'couponShortUrl',
         '21' => 'isRecommend',
-        '22' => 'group',
+        '22' => 'groupThresh',
         '23' => 'groupPrice',
-        '24' => 'groupReturn',
+        '24' => 'groupCommission',
         '25' => 'groupStart',
         '26' => 'groupEnd',
     ];
@@ -96,7 +96,7 @@ class ExcelDataParser
                 $price = self::calcPriceWithCoupon($row[$header['price']], $row[$header['couponValue']]);
                 $item = [
                     'thumb' => $row[$header['thumb']] . '_640x0q85s150_.webp',
-                    'title' => $row[$header['name']],
+                    'title' => $row[$header['info']],
                     'reservePrice' => $price[0],
                     'coupon' => $price[1],
                     'price' => $price[2],
