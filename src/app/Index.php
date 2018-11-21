@@ -2,12 +2,10 @@
 
 namespace app;
 
-use app\common\AppBase;
-
-class Index extends AppBase
+class Index
 {
-    function get($f3)
+    function get()
     {
-        echo \Template::instance()->render('index.html');
+        header('location:ezd.html');
     }
 }
