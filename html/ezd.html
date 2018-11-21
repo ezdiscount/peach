@@ -34,7 +34,7 @@
     }
     .card {
         border-radius: 0;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
     .card-thumb {
         width: 100%;
@@ -68,12 +68,18 @@
     .text-coupon {
         color: #dd3b2f;
     }
+    .fa-tag+span {
+        font-size: 0.8rem;
+    }
     .text-price {
         padding-top: 0.5rem;
         padding-bottom: 0.5rem;
         background-color: #dd3b2f;
         color: white;
         font-size: 1rem;
+    }
+    .text-price span {
+        font-size: 0.8rem;
     }
 </style>
 </head>
@@ -153,8 +159,8 @@
                     '<div class="col-6"><div class="card" onclick="location.href=\'' + data[i].url + '\'">' +
                     '<div class="card-thumb"><img src="' + data[i].thumb + '"/></div>' +
                     '<div class="card-body"><p class="card-text">' + data[i].title + '</p></div>' +
-                    '<div class="card-body text-coupon"><span class="coupon"><i class="fa fa-gift">&nbsp;</i>' + data[i].coupon + '</span></div>' +
-                    '<div class="card-body text-price">￥' + data[i].price + '&nbsp;<span class="reserve-price">' + data[i].reservePrice + '</span></div>' +
+                    '<div class="card-body text-coupon"><i class="fa fa-tag">&nbsp;</i><span>券</span></span><span class="coupon">' + data[i].coupon + '元</span></div>' +
+                    '<div class="card-body text-price"><span>券后</span>￥' + data[i].price + '&nbsp;<span class="reserve-price">' + data[i].reservePrice + '</span></div>' +
                     '</div></div>'
                 );
             }

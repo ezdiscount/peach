@@ -112,7 +112,7 @@ class ProductRawData
                 'title' => $row[$header['info']],
                 'reservePrice' => $price[0],
                 'coupon' => $price[1],
-                'price' => $price[2],
+                'price' => sprintf("%.2f", $price[2]),
                 'url' => $row[$header['couponShortUrl']],
             ];
             $content .= json_encode($item, JSON_UNESCAPED_UNICODE);
