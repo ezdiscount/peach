@@ -1,6 +1,20 @@
-DROP TABLE if exists product;
+DROP TABLE IF EXISTS admin;
+CREATE TABLE admin (
+  id int(20) unsigned NOT NULL AUTO_INCREMENT,
+  username VARCHAR(100) NOT NULL,
+  password VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL DEFAULT '',
+  mobile VARCHAR(100) NOT NULL DEFAULT '',
+  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '0:disabled,1:enabled',
+  create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY(ID)
+);
+CREATE UNIQUE INDEX index_admin_username ON admin (username);
+
+DROP TABLE if exists product_raw;
 CREATE TABLE product_raw (
   id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  affiliate VARCHAR(100) NOT NULL DEFAULT 'www',
   status TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0:pending,1:ready,2:remove',
   weight INT UNSIGNED NOT NULL DEFAULT 0,
   create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

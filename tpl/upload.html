@@ -13,6 +13,7 @@
     </style>
 </head>
 <body>
+<include href="common/navbar.html"/>
 <div class="container">
     <img class="img-fluid" src="{{@base}}/img/data_format.png">
     <form id="upload-form">
@@ -52,12 +53,14 @@
             processData: false,
             beforeSend: function () {
                 console.log("PUT ... " + file.name);
-                disableUpload();
+                disableUpload("PUT");
             }
         }).done(function (data, textStatus, jqXHR) {
             console.log(data, textStatus, jqXHR);
-            showResult('PUT', file.name);
-        }).fail(console.log).always(enableUpload);
+            showResult("PUT", file.name);
+        }).fail(console.log).always(function () {
+            enableUpload("PUT");
+        });
     }
 
     function post() {
@@ -83,26 +86,44 @@
             processData: false,
             beforeSend: function () {
                 console.log("POST ... " + file.name);
-                disableUpload();
+                disableUpload("POST");
             }
         }).done(function (data, textStatus, jqXHR) {
             console.log(data, textStatus, jqXHR);
-            showResult('POST', file.name);
-        }).fail(console.log).always(enableUpload);
+            showResult("POST", file.name);
+        }).fail(console.log).always(function () {
+            enableUpload("POST");
+        });
     }
 
     function showResult(method, filename) {
         $(".table").append('<tr><td>' + method + '</td><td><a href="{{@base}}/Upload/' + filename + '" target="_blank">' + filename + '</a></td></tr>');
     }
 
-    function disableUpload() {
+    function disableUpload(method) {
         $("button.post").attr("disabled", "disabled");
         $("button.put").attr("disabled", "disabled");
+        switch (method.toLowerCase()) {
+            case "post":
+                $("button.post").html('<i class="fa fa-spinner fa-pulse animated">');
+                break;
+            case "put":
+                $("button.put").html('<i class="fa fa-spinner fa-pulse animated">');
+                break;
+        }
     }
 
-    function enableUpload() {
+    function enableUpload(method) {
         $("button.post").removeAttr("disabled");
         $("button.put").removeAttr("disabled");
+        switch (method.toLowerCase()) {
+            case "post":
+                $("button.post").text("POST");
+                break;
+            case "put":
+                $("button.put").text("PUT");
+                break;
+        }
     }
 </script>
 </body>

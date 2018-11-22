@@ -1,12 +1,17 @@
-<nav class="navbar navbar-light bg-light">
-    <div class="container-fluid">
-        <ul class="nav">
-            <li class="nav-item"><a class="nav-link" href="{{@BASE}}/">{{@dict['nav_index']}}</a></li>
-        </ul>
-        <ul class="nav">
-            <li class="nav-item"><a id="logout" class="nav-link" href="javascript:void(0)">{{@dict['nav_logout']}}</a></li>
-        </ul>
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenuWrapper" aria-controls="navbarMenuWrapper" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="/">
+        <img src="{{@BASE}}/img/ezd_icon.png" width="30" height="30" class="d-inline-block align-top">
+    </a>
+    <div class="collapse navbar-collapse" id="navbarMenuWrapper">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" href="{{@BASE}}/">{{@dict['nav_index']}}</a>
+            <a class="nav-item nav-link" href="{{@BASE}}/Upload">{{@dict['nav_upload']}}</a>
+        </div>
     </div>
+    <a class="nav-item nav-link" href="javascript:void(0)" id="logout"><i class="fa fa-sign-out">&nbsp;</i>{{@dict['nav_logout']}}</a>
 </nav>
 <include href="common/modal.html"/>
 <script>
@@ -15,7 +20,7 @@
         $("nav a").each(function () {
             if ($(this).attr("href").toLowerCase() === context) {
                 $(this).removeAttr("href");
-                $(this).parent().addClass("disabled");
+                $(this).addClass("active");
                 return false;
             }
         });

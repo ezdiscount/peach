@@ -71,14 +71,14 @@
                             return;
                         }
                     }
-                    alert(textStatus);
-                    console.error(textStatus, jqXHR);
+                    alert(data);
+                    console.log(textStatus, jqXHR);
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                     alert(textStatus);
-                    console.error(textStatus, jqXHR, errorThrown);
+                    console.log(textStatus, jqXHR, errorThrown);
                 })
-                .complete(function (jqXHR, textStatus ) {
+                .always(function () {
                     $("#login-submit").removeAttr("disabled");
                 })
         });

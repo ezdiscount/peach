@@ -3,6 +3,7 @@
 namespace app;
 
 use app\common\AppHelper;
+use db\SqlMapper;
 
 class Login
 {
@@ -33,13 +34,15 @@ class Login
         } else {
             $logger->write("User $username login failure");
             echo json_encode([
-                'error' => ['code' => 0, 'text' => 'login error']
+                'error' => ['code' => -1, 'text' => 'login error']
             ]);
         }
     }
 
     function validate($username, $password)
     {
-        return true;
+        $admin = new SqlMapper('admin');
+        $admin->load(['username=? AND status=1', $username]);
+        return $admin && password_verify($password, $admin['password']);
     }
 }
