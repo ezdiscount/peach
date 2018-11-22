@@ -13,7 +13,7 @@ class ProductRawData
     const RAW = RUNTIME . '/raw.json';
     const HEADER = [
         '0' => 'tid',
-        '1' => 'info',
+        '1' => 'title',
         '2' => 'thumb',
         '3' => 'detailUrl',
         '4' => 'store',
@@ -113,7 +113,7 @@ class ProductRawData
             $price = self::calcPriceWithCoupon($row[$header['price']], $row[$header['couponValue']]);
             $item = [
                 'thumb' => $row[$header['thumb']] . '_640x0q85s150_.webp',
-                'title' => $row[$header['info']],
+                'title' => $row[$header['title']],
                 'reservePrice' => $price[0],
                 'coupon' => $price[1],
                 'price' => sprintf("%.2f", $price[2]),
@@ -148,9 +148,9 @@ class ProductRawData
             $mapper['status'] = 1;
             $price = self::calcPriceWithCoupon($row[$header['price']], $row[$header['couponValue']]);
             $mapper['tid'] = $tid;
-            $mapper['info'] = $row[$header['info']] ?? '';
-            $mapper['thumb'] = $row[$header['thumb']] . '_640x0q85s150_.webp';
-            $mapper['detailUrl'] = $row[$header['detailUrl']] ?? '';
+            $mapper['title'] = $row[$header['title']] ?? '';
+            $mapper['thumb'] = str_replace(['http:', 'https:'], '', $row[$header['thumb']]) ?? '';
+            $mapper['detailUrl'] = str_replace(['http:', 'https:'], '', $row[$header['detailUrl']]) ?? '';
             $mapper['store'] = $row[$header['store']] ?? '';
             $mapper['price'] = intval($price[0] * 100);
             $mapper['salesVolume'] = $row[$header['salesVolume']] ?? 0;
