@@ -2,6 +2,8 @@
 
 namespace service;
 
+use db\Mysql;
+use db\SqlMapper;
 use Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
@@ -67,6 +69,7 @@ class ProductRawData
         '25' => '拼团开始时间',
         '26' => '拼团结束时间',
     ];
+    static $affiliate;
 
     /**
      * @param $file : absolute path of excel
@@ -91,7 +94,8 @@ class ProductRawData
         $raw = $spreadsheet->getActiveSheet()->toArray();
         if (self::RAW_HEADER === $raw[0]) {
             unset($raw[0]);
-            self::raw2File($raw);
+            //self::raw2File($raw);
+            self::raw2Database($raw);
         } else {
             ob_start();
             var_dump($raw[0]);
@@ -127,6 +131,55 @@ class ProductRawData
         file_put_contents(self::RAW, $content,LOCK_EX);
     }
 
+    static function raw2Database($raw)
+    {
+        $db = Mysql::instance()->get();
+        $db->begin();
+        $header = array_flip(self::HEADER);
+        $mapper = new SqlMapper('product_raw');
+        foreach ($raw as $row) {
+            $tid = $row[$header['tid']];
+            if (!$tid) {
+                continue;
+            }
+            $affiliate = self::getAffiliate();
+            $mapper->load(['affiliate=? AND tid=?', $affiliate, $tid]);
+            $mapper['affiliate'] = $affiliate;
+            $mapper['status'] = 1;
+            $price = self::calcPriceWithCoupon($row[$header['price']], $row[$header['couponValue']]);
+            $mapper['tid'] = $tid;
+            $mapper['info'] = $row[$header['info']] ?? '';
+            $mapper['thumb'] = $row[$header['thumb']] . '_640x0q85s150_.webp';
+            $mapper['detailUrl'] = $row[$header['detailUrl']] ?? '';
+            $mapper['store'] = $row[$header['store']] ?? '';
+            $mapper['price'] = intval($price[0] * 100);
+            $mapper['salesVolume'] = $row[$header['salesVolume']] ?? 0;
+            $mapper['commissionRate'] = $row[$header['commissionRate']] ? str_replace('%', '', $row[$header['commissionRate']]) : 0;
+            $mapper['commissionValue'] = intval($row[$header['commissionValue']] * 100);
+            $mapper['sellerWaWa'] = $row[$header['sellerWaWa']] ?? '';
+            $mapper['tkShortUrl'] = $row[$header['tkShortUrl']] ?? '';
+            $mapper['tkUrl'] = $row[$header['tkUrl']] ?? '';
+            $mapper['tkCode'] = $row[$header['tkCode']] ?? '';
+            $mapper['couponTotal'] = intval($row[$header['couponTotal']]);
+            $mapper['couponAvailable'] = intval($row[$header['couponAvailable']]);
+            $mapper['couponValue'] = intval($price[1] * 100);
+            $mapper['couponStart'] = self::checkDate($row[$header['couponStart']]);
+            $mapper['couponEnd'] = self::checkDate($row[$header['couponEnd']]);
+            $mapper['couponUrl'] = $row[$header['couponUrl']] ?? '';
+            $mapper['couponCode'] = $row[$header['couponCode']] ?? '';
+            $mapper['couponShortUrl'] = $row[$header['couponShortUrl']] ?? '';
+            $mapper['isRecommend'] = ($row[$header['isRecommend']] == '是') ? 1 : 0;
+            $mapper['groupThresh'] = intval($row[$header['groupThresh']]);
+            $mapper['groupPrice'] = intval($row[$header['groupPrice']] * 100);
+            $mapper['groupCommission'] = intval($row[$header['groupCommission']] * 100);
+            $mapper['groupStart'] = self::checkDate($row[$header['groupStart']]);
+            $mapper['groupEnd'] = self::checkDate($row[$header['groupEnd']]);
+            $mapper->save();
+            $mapper->reset();
+        }
+        $db->commit();
+    }
+
     /**
      * @param $price
      * @param $couponValue
@@ -147,5 +200,28 @@ class ProductRawData
         } else {
             return [$price, 0, $price];
         }
+    }
+
+    static function checkDate($date)
+    {
+        $default = '2018-01-01';
+        if ($date && (strtotime($date) > strtotime($default))) {
+            return $date;
+        } else {
+            return $default;
+        }
+    }
+
+    static function getAffiliate()
+    {
+        if (!self::$affiliate) {
+            $domain = explode('.', $_SERVER['SERVER_NAME']);
+            if (count($domain) > 2) {
+                self::$affiliate = is_numeric($domain[0]) ? 'www' : $domain[0];
+            } else {
+                self::$affiliate = 'www';
+            }
+        }
+        return self::$affiliate;
     }
 }

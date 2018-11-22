@@ -19,7 +19,7 @@ CREATE TABLE product_raw (
   weight INT UNSIGNED NOT NULL DEFAULT 0,
   create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   # from excel:
-  tid INT UNSIGNED UNIQUE NOT NULL DEFAULT 0,
+  tid BIGINT NOT NULL DEFAULT 0,
   info VARCHAR(500) NOT NULL DEFAULT '',
   thumb VARCHAR(1000) NOT NULL DEFAULT '',
   detailUrl VARCHAR(1000) NOT NULL DEFAULT '',
@@ -47,3 +47,5 @@ CREATE TABLE product_raw (
   groupStart TIMESTAMP NOT NULL DEFAULT '2018-01-01',
   groupEnd TIMESTAMP NOT NULL DEFAULT '2018-01-01'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE INDEX index_product_affiliate ON product_raw (affiliate);
+CREATE UNIQUE INDEX index_product_affiliate_pid ON product_raw (affiliate, tid);
