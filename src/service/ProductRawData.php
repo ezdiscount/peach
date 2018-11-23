@@ -2,6 +2,7 @@
 
 namespace service;
 
+use app\metrics\Helper;
 use db\Mysql;
 use db\SqlMapper;
 use Log;
@@ -142,7 +143,7 @@ class ProductRawData
             if (!$tid) {
                 continue;
             }
-            $affiliate = self::getAffiliate();
+            $affiliate = Helper::getDomain();
             $mapper->load(['affiliate=? AND tid=?', $affiliate, $tid]);
             $mapper['affiliate'] = $affiliate;
             $mapper['status'] = 1;
@@ -210,18 +211,5 @@ class ProductRawData
         } else {
             return $default;
         }
-    }
-
-    static function getAffiliate()
-    {
-        if (!self::$affiliate) {
-            $domain = explode('.', $_SERVER['SERVER_NAME']);
-            if (count($domain) > 2) {
-                self::$affiliate = is_numeric($domain[0]) ? 'www' : $domain[0];
-            } else {
-                self::$affiliate = 'www';
-            }
-        }
-        return self::$affiliate;
     }
 }

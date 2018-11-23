@@ -2,8 +2,8 @@
 
 namespace app\v1;
 
+use app\metrics\Helper;
 use db\SqlMapper;
-use service\ProductRawData;
 
 class Data
 {
@@ -14,7 +14,7 @@ class Data
     {
         $pageSize = $this->defaultPageSize;
         $pageNo = intval($args['pageNo']) ?? 0;
-        $affiliate = ProductRawData::getAffiliate();
+        $affiliate = Helper::getDomain();
         $filter = ['affiliate=? AND status=1 AND couponEnd>?', $affiliate, date('Y-m-d')];
         $mapper = new SqlMapper('product_raw');
         $pageTotal = ceil($mapper->count($filter, null, $this->defaultCacheTime) / $pageSize);
@@ -27,6 +27,7 @@ class Data
             $page = $mapper->paginate($offset, $pageSize, $filter, $option, $this->defaultCacheTime);
             foreach ($page['subset'] as $item) {
                 $data[] = [
+                    'tid' => $item['tid'],
                     'thumb' => $item['thumb'] . '_640x0q85s150_.webp',
                     'title' => $item['title'],
                     'reservePrice' => sprintf('%.2f', $item['price'] / 100),

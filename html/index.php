@@ -1,10 +1,16 @@
 <?php
 
+use Prometheus\Storage\Redis;
+
 define('HTML', __DIR__);
 define('ROOT', dirname(HTML));
 define('RUNTIME', ROOT . '/runtime');
 
 require_once ROOT . '/vendor/autoload.php';
+
+Redis::setDefaultOptions([
+    'host' => 'redis',
+]);
 
 call_user_func(function ($f3) {
     $sysDirs = [
