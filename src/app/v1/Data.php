@@ -25,10 +25,11 @@ class Data
                 'order' => 'weight DESC, create_time DESC'
             ];
             $page = $mapper->paginate($offset, $pageSize, $filter, $option, $this->defaultCacheTime);
+            $webp = $this->isWebPSupported() ? '_640x0q85s150_.webp' : '';
             foreach ($page['subset'] as $item) {
                 $data[] = [
                     'tid' => $item['tid'],
-                    'thumb' => $item['thumb'] . '_640x0q85s150_.webp',
+                    'thumb' => $item['thumb'] . $webp,
                     'title' => $item['title'],
                     'reservePrice' => sprintf('%.2f', $item['price'] / 100),
                     'coupon' => sprintf('%.2f', $item['couponValue'] / 100),
@@ -40,5 +41,11 @@ class Data
             $f3->LOGGER->write("request page $pageNo: no data");
         }
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    }
+
+    function isWebPSupported()
+    {
+        $detect = new \Mobile_Detect;
+        return $detect->is('AndroidOS') || $detect->is('Chrome');
     }
 }

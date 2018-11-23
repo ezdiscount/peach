@@ -146,7 +146,7 @@
                 alert(textStatus);
             }
         }).fail(ajaxErrorLog);
-        $.get("/metrics/click/index");
+        $.post("/metrics/click/index");
     });
 
     function render(data) {
@@ -170,7 +170,7 @@
     }
 
     function detail(id, href) {
-        $.get("/metrics/click/product/" + id).always(function () {
+        $.post("/metrics/click/product/" + id).always(function () {
             location.href = href;
         });
     }
