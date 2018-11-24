@@ -4,10 +4,25 @@
     <title>优惠码</title>
     <include href="common/header.html"/>
     <style>
-        .card-img-top,.card-header:first-child,.card-footer:last-child {
+        .card-img-top,.card-header:first-child {
             border-radius: 0;
         }
-        .bg-danger,.btn-danger {
+        .card-header {
+            padding: 0.1rem 1rem 0.2rem;
+        }
+        .reserve-price {
+            margin-bottom: 0;
+            color: lightgray;
+            text-decoration-line: line-through;
+        }
+        .card-body {
+            padding: 1rem;
+            font-size: 0.8rem;
+        }
+        .card-body p {
+            margin-bottom: 0.5rem;
+        }
+        .btn-danger {
             background-color: #dd3b2f !important;
         }
         .text-danger {
@@ -18,20 +33,29 @@
             border-radius: 0;
             color: white;
         }
+        i.fa, .reserve-price {
+            font-size: 0.8rem;
+        }
+        i span,.text-code {
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
-        <div class="card">
-            <div class="card-header bg-danger text-white">
-                {{@title}}
-            </div>
-            <img class="card-img-top" src="{{@thumb}}">
-            <div class="card-body">
-                <p class="card-text text-danger">折扣价&nbsp;{{@price / 100}},&nbsp;领券减&nbsp;{{@couponValue / 100}}&nbsp;元</p>
-                <h5 class="card-title text-danger">{{@couponCode}}</h5>
-            </div>
-            <button class="btn btn-danger" data-clipboard-action="copy" data-clipboard-target=".card-body">一键复制</button>
-        </div>
+<div class="card">
+    <img class="card-img-top" src="{{@thumb}}">
+    <div class="card-header">
+        <i class="fa fa-rmb text-danger">&nbsp;<span>{{(@price - @couponValue) / 100}}</span></i>
+        <p class="reserve-price">价格&nbsp;￥{{@price / 100}}</p>
+    </div>
+    <div class="card-body">
+        <p class="card-text">{{@title}}</p>
+        <p class="card-text">折扣价￥{{@price / 100}}&nbsp;领券再减{{@couponValue / 100}}元</p>
+        <p class="card-text text-danger">复制领券码&nbsp;<i class="fa fa-hand-o-down"></i>&nbsp;打开淘宝App</p>
+        <p class="card-text text-danger text-code">{{@couponCode}}</p>
+    </div>
+    <button class="btn btn-danger" data-clipboard-action="copy" data-clipboard-target=".card-body">一键复制</button>
+</div>
 </body>
 <script src="https://cdn.bootcss.com/clipboard.js/2.0.1/clipboard.min.js"></script>
 <script>
