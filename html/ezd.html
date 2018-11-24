@@ -170,11 +170,11 @@
     }
 
     function detail(id, tid, href) {
-        $.post("/metrics/click/product/" + id).always(function () {
+        $.post("/metrics/click/product/" + tid).always(function () {
             if (!isWeChat()) {
                 location.href = href;
             } else {
-                location.href = "/v1/wechat/simple" + id;
+                location.href = "/v1/wechat/simple/" + id;
             }
         });
     }
