@@ -27,6 +27,7 @@ class Data
             $page = $mapper->paginate($offset, $pageSize, $filter, $option, $this->defaultCacheTime);
             foreach ($page['subset'] as $item) {
                 $data[] = [
+                    'id' => $item['id'],
                     'tid' => $item['tid'],
                     'thumb' => $item['thumb'],
                     'title' => $item['title'],

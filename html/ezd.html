@@ -157,7 +157,7 @@
                     $("#content").append('<div class="row"></div>');
                 }
                 $(".row:last-of-type").append(
-                    '<div class="col-6"><div class="card" onclick="detail(\'' + data[i].tid + '\',\'' + data[i].url + '\')">' +
+                    '<div class="col-6"><div class="card" onclick="detail(\'' + data[i].id + '\',\'' + data[i].tid + '\',\'' + data[i].url + '\')">' +
                     '<div class="card-thumb"><img src="' + data[i].thumb + webp() + '"/></div>' +
                     '<div class="card-body"><p class="card-text">' + data[i].title + '</p></div>' +
                     '<div class="card-body text-coupon"><i class="fa fa-tag">&nbsp;</i><span>券</span></span><span class="coupon">' + data[i].coupon + '元</span></div>' +
@@ -169,12 +169,12 @@
         }
     }
 
-    function detail(id, href) {
+    function detail(id, tid, href) {
         $.post("/metrics/click/product/" + id).always(function () {
             if (!isWeChat()) {
                 location.href = href;
             } else {
-                alert('WeChat');
+                location.href = "/v1/wechat/simple" + id;
             }
         });
     }

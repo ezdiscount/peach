@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>优惠码</title>
+    <include href="common/header.html"/>
+    <style>
+        .card-img-top,.card-header:first-child,.card-footer:last-child {
+            border-radius: 0;
+        }
+        .bg-danger,.btn-danger {
+            background-color: #dd3b2f !important;
+        }
+        .text-danger {
+            color: #dd3b2f !important;
+        }
+        .btn-danger {
+            width: 100%;
+            border-radius: 0;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                {{@title}}
+            </div>
+            <img class="card-img-top" src="{{@thumb}}">
+            <div class="card-body">
+                <p class="card-text text-danger">折扣价&nbsp;{{@price / 100}},&nbsp;领券减&nbsp;{{@couponValue / 100}}&nbsp;元</p>
+                <h5 class="card-title text-danger">{{@couponCode}}</h5>
+            </div>
+            <button class="btn btn-danger" data-clipboard-action="copy" data-clipboard-target=".card-body">一键复制</button>
+        </div>
+</body>
+<script src="https://cdn.bootcss.com/clipboard.js/2.0.1/clipboard.min.js"></script>
+<script>
+    $(function () {
+        var clipboard = new ClipboardJS(".btn");
+        clipboard.on("success", function(e) {
+            console.log(e);
+            alert("复制成功");
+        });
+        clipboard.on("error", function(e) {
+            console.log(e);
+            alert("复制失败，请您长按选择优惠码并手动复制");
+        });
+    })
+</script>
+</html>
