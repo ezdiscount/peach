@@ -158,7 +158,7 @@
                 }
                 $(".row:last-of-type").append(
                     '<div class="col-6"><div class="card" onclick="detail(\'' + data[i].tid + '\',\'' + data[i].url + '\')">' +
-                    '<div class="card-thumb"><img src="' + data[i].thumb + '"/></div>' +
+                    '<div class="card-thumb"><img src="' + data[i].thumb + webp() + '"/></div>' +
                     '<div class="card-body"><p class="card-text">' + data[i].title + '</p></div>' +
                     '<div class="card-body text-coupon"><i class="fa fa-tag">&nbsp;</i><span>券</span></span><span class="coupon">' + data[i].coupon + '元</span></div>' +
                     '<div class="card-body text-price"><span>券后</span>￥' + data[i].price + '&nbsp;<span class="reserve-price">' + data[i].reservePrice + '</span></div>' +
@@ -171,7 +171,11 @@
 
     function detail(id, href) {
         $.post("/metrics/click/product/" + id).always(function () {
-            location.href = href;
+            if (!isWeChat()) {
+                location.href = href;
+            } else {
+                alert('WeChat');
+            }
         });
     }
 

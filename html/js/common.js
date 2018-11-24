@@ -40,3 +40,11 @@ function isJsonString(data) {
         return false;
     }
 }
+
+function webp() {
+    return (window.navigator.userAgent.match(/\Chrome\b/) == "Chrome") ? "_640x0q85s150_.webp" : "";
+}
+
+function isWeChat() {
+    return window.navigator.userAgent.match(/\bMicroMessenger\b/) == "MicroMessenger";
+}
