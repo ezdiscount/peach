@@ -8,7 +8,7 @@ use db\SqlMapper;
 class Data
 {
     private $defaultPageSize = 10;
-    private $defaultCacheTime = 600;
+    private $defaultCacheTime = 0;
 
     function pagination($f3, $args)
     {
