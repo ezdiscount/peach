@@ -17,6 +17,11 @@
 <div class="container">
     <img class="img-fluid" src="{{@base}}/img/data_format.png">
     <form id="upload-form">
+        <select name="type" class="form-control">
+            <option value="-1"></option>
+            <option value="0">普通佣金</option>
+            <option value="1">高佣活动</option>
+        </select>
         <input id="upload-file" class="form-control" type="file" name="upload-test"/>
         <button class="btn btn-primary post" type="button">POST</button>
     </form>
@@ -38,6 +43,10 @@
             alert("{{@dict['upload']['file_required']}}");
             return false;
         }
+        if ($("select[name=type]").val() == -1) {
+            alert("没有选择佣金类型");
+            return false;
+        }
         if (!validateUploadFileSize(file)) {
             alert("文件过大");
             return false;
@@ -45,6 +54,7 @@
         var formData = new FormData();
         formData.set("enctype", "multipart/form-data");
         formData.append("name", file.name);
+        formData.append("type", $("select[name=type]").val());
         formData.append("file", file);
         $.ajax({
             url: "{{@base}}/Upload/",

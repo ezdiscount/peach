@@ -5,6 +5,7 @@ namespace app;
 use app\common\AppHelper;
 use PhpOffice\PhpSpreadsheet\Exception;
 use service\ProductRawData;
+use service\ProductRawDataHC;
 
 class Upload extends \Web
 {
@@ -53,7 +54,12 @@ class Upload extends \Web
         $receive = $this->receive(null, true, false);
         if ($receive) {
             try {
-                ProductRawData::parse($f3->UPLOADS . $this->fileName);
+                $type = $f3->POST['type'] ?? 0;
+                if ($type == 0) {
+                    ProductRawData::parse($f3->UPLOADS . $this->fileName);
+                } else if ($type == 1) {
+                    ProductRawDataHC::parse($f3->UPLOADS . $this->fileName);
+                }
                 echo "success";
             } catch (Exception $e) {
                 var_dump($e);
