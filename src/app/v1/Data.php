@@ -20,11 +20,10 @@ class Data
         $pageTotal = ceil($mapper->count($filter, null, $this->defaultCacheTime) / $pageSize);
         $data = [];
         if ($pageNo >= 1 && $pageNo <= $pageTotal) {
-            $offset = ($pageNo - 1) * $pageSize;
             $option = [
                 'order' => 'weight DESC, create_time DESC'
             ];
-            $page = $mapper->paginate($offset, $pageSize, $filter, $option, $this->defaultCacheTime);
+            $page = $mapper->paginate($pageNo - 1, $pageSize, $filter, $option, $this->defaultCacheTime);
             foreach ($page['subset'] as $item) {
                 $data[] = [
                     'id' => $item['id'],
