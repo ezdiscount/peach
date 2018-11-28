@@ -147,6 +147,7 @@ class ProductRawData
             $mapper->load(['affiliate=? AND tid=?', $affiliate, $tid]);
             $mapper['affiliate'] = $affiliate;
             $mapper['status'] = 1;
+            $mapper['create_time'] = date('Y-m-d H:i:s');
             $price = self::calcPriceWithCoupon($row[$header['price']], $row[$header['couponValue']]);
             $mapper['tid'] = $tid;
             $mapper['title'] = $row[$header['title']] ?? '';
