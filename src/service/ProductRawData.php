@@ -75,7 +75,7 @@ class ProductRawData
     /**
      * @param $file : absolute path of excel
      * @see html/img/data_format.png
-     * @return bool
+     * @return array [code, reason]
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     static function parse($file)
@@ -90,7 +90,10 @@ class ProductRawData
             $spreadsheet = IOFactory::load($file);
         } else {
             $logger->write("Unsupported file type: $suffix");
-            return false;
+            return [
+                'code' => -1,
+                'reason' => "Unsupported file type: $suffix"
+            ];
         }
         $raw = $spreadsheet->getActiveSheet()->toArray();
         if (self::RAW_HEADER === $raw[0]) {
@@ -102,8 +105,12 @@ class ProductRawData
             var_dump($raw[0]);
             $logger->write('Unsupported file header:');
             $logger->write(ob_get_clean());
+            return [
+                'code' => -1,
+                'reason' => "Unsupported file header"
+            ];
         }
-        return true;
+        return ['code' => 0];
     }
 
     static function raw2File($raw)

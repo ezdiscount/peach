@@ -69,7 +69,11 @@
             }
         }).done(function (data, textStatus, jqXHR) {
             console.log(data, textStatus, jqXHR);
-            showResult("POST", file.name);
+            if (data === "success") {
+                showResult("POST", file.name);
+            } else {
+                alert(data);
+            }
         }).fail(console.log).always(enableUpload);
     }
 

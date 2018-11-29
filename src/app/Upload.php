@@ -56,16 +56,28 @@ class Upload extends \Web
             try {
                 $type = $f3->POST['type'] ?? 0;
                 if ($type == 0) {
-                    ProductRawData::parse($f3->UPLOADS . $this->fileName);
+                    $result = ProductRawData::parse($f3->UPLOADS . $this->fileName);
                 } else if ($type == 1) {
-                    ProductRawDataHC::parse($f3->UPLOADS . $this->fileName);
+                    $result = ProductRawDataHC::parse($f3->UPLOADS . $this->fileName);
+                } else {
+                    $result = [
+                        'code' => -1,
+                        'reason' => "Unsupported parameter type=$type",
+                    ];
                 }
-                echo "success";
+                if ($result['code'] === 0) {
+                    echo "success";
+                } else {
+                    echo $result['reason'];
+                }
             } catch (Exception $e) {
+                ob_start();
                 var_dump($e);
+                $f3->LOGGER->write(ob_get_clean());
+                echo $e->getMessage();
             }
         } else {
-            echo "failure";
+            echo "upload error";
         }
     }
 }
