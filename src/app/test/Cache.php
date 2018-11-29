@@ -2,6 +2,8 @@
 
 namespace app\test;
 
+use Prometheus\Storage\Redis;
+
 class Cache
 {
     function post($f3)
@@ -17,5 +19,15 @@ class Cache
         echo $f3->CACHE, PHP_EOL;
         $name = $_GET['name'] ?? false;
         echo ($name === false) ? 'false' : $f3->get($name);
+    }
+
+    function flushRedis($f3)
+    {
+        if ($f3->DEBUG) {
+            $redis = new Redis([
+                'host' => 'redis'
+            ]);
+            $redis->flushRedis();
+        }
     }
 }
