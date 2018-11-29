@@ -5,7 +5,6 @@ namespace service;
 use app\metrics\Helper;
 use db\Mysql;
 use db\SqlMapper;
-use Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
 
@@ -80,7 +79,7 @@ class ProductRawData
      */
     static function parse($file)
     {
-        $logger = Log::instance(date('Y-m-d.\l\o\g'));
+        $logger = \Base::instance()->LOGGER;
         $logger->write("parse: $file");
         $suffix = pathinfo($file, PATHINFO_EXTENSION);
         if ($suffix === 'xls') {

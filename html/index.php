@@ -1,14 +1,12 @@
 <?php
 
-use Prometheus\Storage\Redis;
-
 define('HTML', __DIR__);
 define('ROOT', dirname(HTML));
 define('RUNTIME', ROOT . '/runtime');
 
 require_once ROOT . '/vendor/autoload.php';
 
-Redis::setDefaultOptions([
+Prometheus\Storage\Redis::setDefaultOptions([
     'host' => 'redis',
 ]);
 
@@ -48,7 +46,7 @@ call_user_func(function ($f3) {
         }
     }
 
-    $f3->LOGGER = Log::instance(date('Y-m-d.\l\o\g'));
+    $f3->LOGGER = new Log(date('Y-m-d.\l\o\g'));
 
     if (PHP_SAPI != 'cli') {
         $f3->run();
