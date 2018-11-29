@@ -6,8 +6,8 @@ use Prometheus\CollectorRegistry;
 
 class Click
 {
-    const CLICK_INTERVAL_INDEX = 3600;
-    const CLICK_INTERVAL_PRODUCT = 300;
+    const CLICK_INTERVAL_INDEX = 300;
+    const CLICK_INTERVAL_PRODUCT = 60;
 
     function index()
     {
