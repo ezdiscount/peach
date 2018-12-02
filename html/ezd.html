@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
 <title>EZDiscount</title>
 <link rel="icon" href="img/ezd_icon.png"/>
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -171,11 +171,7 @@
 
     function detail(id, tid, href) {
         $.post("/metrics/click/product/" + tid).always(function () {
-            if (!isWeChat()) {
-                location.href = href;
-            } else {
-                location.href = "/v1/wechat/simple/" + id;
-            }
+            location.href = "/v1/gateway/product/" + id + "?url=" + href;
         });
     }
 

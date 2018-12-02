@@ -183,7 +183,6 @@ class ProductRawData
             $mapper['groupStart'] = self::checkDate($row[$header['groupStart']]);
             $mapper['groupEnd'] = self::checkDate($row[$header['groupEnd']]);
             $mapper->save();
-            $mapper->reset();
         }
         $db->commit();
     }

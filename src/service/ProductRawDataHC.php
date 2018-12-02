@@ -150,7 +150,6 @@ class ProductRawDataHC
             $mapper['couponCode'] = $row[$header['couponCode']] ?? '';
             $mapper['couponShortUrl'] = $row[$header['couponShortUrl']] ?? '';
             $mapper->save();
-            $mapper->reset();
         }
         $db->commit();
     }

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EZDiscount Gateway</title>
+<link rel="icon" href="{{@BASE}}/img/ezd_icon.png"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+<style>
+    html, body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .input-group {
+        display: none;
+        margin-bottom: 1rem;
+    }
+    .btn {
+        width: 100%;
+    }
+    .btn-facebook {
+        display: none;
+    }
+</style>
+</head>
+<body>
+<div class="input-group">
+    <div class="input-group-prepend">
+        <div class="input-group-text">邀请码</div>
+    </div>
+    <input id="referral" type="text" class="form-control" placeholder="referral"/>
+</div>
+<div class="btn btn-outline-primary btn-facebook" onclick="fbLogin()"><i class="fa fa-facebook">&nbsp;</i>Continue with Facebook</div>
+<script src="{{@BASE}}/js/common.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+<script>
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId  : "1927587473997640",
+            version: "v3.2"
+        });
+        $(".btn-facebook").show();
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, "script", "facebook-jssdk"));
+
+    function fbLogin() {
+        if (typeof fbMe === "undefined") {
+            FB.login(function(response) {
+                console.log("fb login response:", response);
+                if (response.status === "connected") {
+                    FB.api("/me?fields=name,email", function(response) {
+                        console.log("fb api/me response:", response);
+                        window.fbMe = response;
+                        submit("{{@BASE}}/v1/gateway/user/get", fbMe)
+                            .done(function (data) {
+                                if (data !== "failed") {
+                                    setCookie("token", JSON.parse(data).token);
+                                    location.reload(true);
+                                } else {
+                                    alert("新用户必须填写邀请码");
+                                    $(".input-group").css("display", "flex");
+                                }
+                            })
+                            .fail(errorHandler)
+                    });
+                } else {
+                    alert("Facebook登录失败，请重试");
+                }
+            }, {scope: "public_profile,email"});
+        } else {
+            let referral = $("#referral").val();
+            if (!/^[A-Za-z0-9]{6}$/.test(referral)) {
+                alert("无效的邀请码");
+                return false;
+            }
+            fbMe.referral = referral;
+            submit("{{@BASE}}/v1/gateway/referral/validate", fbMe)
+                .done(function (data, textStatus, jqXHR) {
+                    if (data === "success") {
+                        submit("{{@BASE}}/v1/gateway/user/create", fbMe)
+                            .done(function (data, textStatus, jqXHR) {
+                                if (data !== "failed") {
+                                    setCookie("token", JSON.parse(data).token);
+                                    location.reload(true);
+                                } else {
+                                    alert("创建新用户失败");
+                                    console.log(data, textStatus, jqXHR);
+                                }
+                            })
+                            .fail(errorHandler);
+                    } else {
+                        alert("无效的邀请码");
+                        console.log(data, textStatus, jqXHR);
+                    }
+                })
+                .fail(errorHandler);
+        }
+    }
+
+    function submit(url, data) {
+        let submitBtn = $(".btn-facebook");
+        return $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            beforeSend: function () {
+                submitBtn.attr("disabled", "disabled").html("<i class='fa fa-spinner fa-pulse animated'></i>");
+            },
+            complete: function () {
+                submitBtn.removeAttr("disabled").html("<i class='fa fa-facebook'>&nbsp;</i>Continue with Facebook");
+            }
+        });
+    }
+
+    function errorHandler(jqXHR, textStatus, errorThrown, message) {
+        console.log(jqXHR, textStatus, errorThrown);
+        if (message) {
+            alert(message);
+        }
+    }
+</script>
+</body>
+</html>
