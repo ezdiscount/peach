@@ -5,7 +5,7 @@ create table user (
   referral char(6) not null comment 'referral\'s affiliate code',
   email varchar(50),
   mobile varchar(50),
-  status tinyint(1) not null default 0 comment '0:disabled,1:enabled',
+  status tinyint(1) not null default 1 comment '0:disabled,1:enabled',
   create_time timestamp not null default current_timestamp,
   update_time timestamp,
   facebook json,
