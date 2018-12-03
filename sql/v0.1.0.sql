@@ -18,7 +18,7 @@ create table user (
   unique idx_user_facebook (fid)
 );
 
-insert into user (id,affiliate,referral,status,facebook) values (1,'888888','888888',1,'{"name": "Vivian Lim","id": "123805028625200"}');
+insert into user (id,affiliate,referral,status,facebook,update_time) values (1,'888888','888888',1,'{"name": "Vivian Lim","id": "123805028625200"}',now());
 select * from user where facebook->'$.id'='123805028625200';
 select facebook->'$.id',facebook->'$.name' from user;
 select fid from user;

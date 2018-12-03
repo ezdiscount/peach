@@ -70,6 +70,7 @@ class Gateway
             $user['referral'] = $referral;
             $user['nickname'] = $nickname;
             $user['facebook'] = json_encode($f3->POST, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $user['update_time'] = date('Y-m-d H:i:s');
             $user->save();
             // TODO: trigger user plan check
             $token = $this->setToken($f3, $user);
