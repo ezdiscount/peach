@@ -13,16 +13,13 @@ class Gateway
 
     function product($f3)
     {
-        if ($this->auth($f3)) {
-            $id = $f3->get('PARAMS.id');
-            $detect = new \Mobile_Detect;
-            if ($detect->is('WeChat')) {
-                $f3->reroute("/v1/wechat/simple/$id");
-            } else {
-                header("location:" . $f3->get('GET.url'));
-            }
+        $id = $f3->get('PARAMS.id');
+        $detect = new \Mobile_Detect;
+        if ($detect->is('WeChat')) {
+            $f3->reroute("/v1/wechat/simple/$id");
+        } else if ($this->auth($f3)) {
+            header("location:" . $f3->get('GET.url'));
         } else {
-            setcookie('target', $f3->REALM, 0, '/');
             echo \Template::instance()->render('v1/gateway.html');
         }
     }

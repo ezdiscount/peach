@@ -57,6 +57,7 @@
 
     function fbLogin() {
         if (typeof fbMe === "undefined") {
+            disableBtn();
             FB.login(function(response) {
                 console.log("fb login response:", response);
                 if (response.status === "connected") {
@@ -77,6 +78,7 @@
                     });
                 } else {
                     alert("Facebook登录失败，请重试");
+                    enableBtn();
                 }
             }, {scope: "public_profile,email"});
         } else {
@@ -110,18 +112,21 @@
     }
 
     function submit(url, data) {
-        let submitBtn = $(".btn-facebook");
         return $.ajax({
             type: "POST",
             url: url,
             data: data,
-            beforeSend: function () {
-                submitBtn.attr("disabled", "disabled").html("<i class='fa fa-spinner fa-pulse animated'></i>");
-            },
-            complete: function () {
-                submitBtn.removeAttr("disabled").html("<i class='fa fa-facebook'>&nbsp;</i>Continue with Facebook");
-            }
+            beforeSend: disableBtn,
+            complete: enableBtn
         });
+    }
+
+    function disableBtn() {
+        $(".btn-facebook").attr("disabled", "disabled").html("<i class='fa fa-spinner fa-pulse animated'></i>");
+    }
+
+    function enableBtn() {
+        $(".btn-facebook").removeAttr("disabled").html("<i class='fa fa-facebook'>&nbsp;</i>Continue with Facebook");
     }
 
     function errorHandler(jqXHR, textStatus, errorThrown, message) {
