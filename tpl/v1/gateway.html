@@ -44,7 +44,14 @@
             appId  : "1927587473997640",
             version: "v3.2"
         });
-        $(".btn-facebook").show();
+        FB.getLoginStatus(function(response) {
+            if (response.status === "connected") {
+                disableBtn().show();
+                fbAccount();
+            } else {
+                enableBtn().show();
+            }
+        });
     };
 
     (function(d, s, id){
@@ -61,21 +68,7 @@
             FB.login(function(response) {
                 console.log("fb login response:", response);
                 if (response.status === "connected") {
-                    FB.api("/me?fields=name,email", function(response) {
-                        console.log("fb api/me response:", response);
-                        window.fbMe = response;
-                        submit("{{@BASE}}/v1/gateway/user/get", fbMe)
-                            .done(function (data) {
-                                if (data !== "failed") {
-                                    setCookie("token", JSON.parse(data).token);
-                                    location.reload(true);
-                                } else {
-                                    alert("新用户必须填写邀请码");
-                                    $(".input-group").css("display", "flex");
-                                }
-                            })
-                            .fail(errorHandler)
-                    });
+                    fbAccount();
                 } else {
                     alert("Facebook登录失败，请重试");
                     enableBtn();
@@ -111,6 +104,24 @@
         }
     }
 
+    function fbAccount() {
+        FB.api("/me?fields=name,email", function(response) {
+            console.log("fb api/me response:", response);
+            window.fbMe = response;
+            submit("{{@BASE}}/v1/gateway/user/get", fbMe)
+                .done(function (data) {
+                    if (data !== "failed") {
+                        setCookie("token", JSON.parse(data).token);
+                        location.reload(true);
+                    } else {
+                        alert("新用户必须填写邀请码");
+                        $(".input-group").css("display", "flex");
+                    }
+                })
+                .fail(errorHandler)
+        });
+    }
+
     function submit(url, data) {
         return $.ajax({
             type: "POST",
@@ -122,11 +133,11 @@
     }
 
     function disableBtn() {
-        $(".btn-facebook").attr("disabled", "disabled").html("<i class='fa fa-spinner fa-pulse animated'></i>");
+        return $(".btn-facebook").attr("disabled", "disabled").html("<i class='fa fa-spinner fa-pulse animated'></i>");
     }
 
     function enableBtn() {
-        $(".btn-facebook").removeAttr("disabled").html("<i class='fa fa-facebook'>&nbsp;</i>Continue with Facebook");
+        return $(".btn-facebook").removeAttr("disabled").html("<i class='fa fa-facebook'>&nbsp;</i>Continue with Facebook");
     }
 
     function errorHandler(jqXHR, textStatus, errorThrown, message) {
