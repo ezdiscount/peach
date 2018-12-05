@@ -5,7 +5,7 @@ CREATE TABLE admin (
   password VARCHAR(100) NOT NULL,
   email VARCHAR(100) NOT NULL DEFAULT '',
   mobile VARCHAR(100) NOT NULL DEFAULT '',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '0:disabled,1:enabled',
+  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '0:disabled;1:enabled',
   create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY(ID)
 );
@@ -15,7 +15,7 @@ DROP TABLE if exists product_raw;
 CREATE TABLE product_raw (
   id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   affiliate VARCHAR(100) NOT NULL DEFAULT 'www',
-  status TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0:pending,1:ready,2:remove',
+  status TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0:pending;1:ready;2:remove',
   weight INT UNSIGNED NOT NULL DEFAULT 0,
   create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   # from excel:
@@ -26,7 +26,7 @@ CREATE TABLE product_raw (
   store VARCHAR(100) NOT NULL DEFAULT '',
   price INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '人民币分',
   saleVolume INT UNSIGNED NOT NULL DEFAULT 0,
-  commissionRate TINYINT(2) UNSIGNED NOT NULL DEFAULT 0 COMMENT '百分数值，1代表1%',
+  commissionRate TINYINT(2) UNSIGNED NOT NULL DEFAULT 0 COMMENT '百分数值:1代表1%',
   commissionValue INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '人民币分',
   sellerWaWa VARCHAR(100) NOT NULL DEFAULT '',
   tkShortUrl VARCHAR(100) NOT NULL DEFAULT '',

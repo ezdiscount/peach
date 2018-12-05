@@ -81,23 +81,15 @@
                 return false;
             }
             fbMe.referral = referral;
-            submit("{{@BASE}}/v1/gateway/referral/validate", fbMe)
+            submit("{{@BASE}}/v1/gateway/user/create", fbMe)
                 .done(function (data, textStatus, jqXHR) {
-                    if (data === "success") {
-                        submit("{{@BASE}}/v1/gateway/user/create", fbMe)
-                            .done(function (data, textStatus, jqXHR) {
-                                if (data !== "failed") {
-                                    setCookie("token", JSON.parse(data).token);
-                                    location.reload(true);
-                                } else {
-                                    alert("创建新用户失败\n请稍后再试");
-                                    console.log(data, textStatus, jqXHR);
-                                }
-                            })
-                            .fail(errorHandler);
-                    } else {
+                    if (data === "invalid_referral") {
                         alert("无效的邀请码");
                         console.log(data, textStatus, jqXHR);
+                        enableBtn();
+                    } else {
+                        setCookie("token", JSON.parse(data).token);
+                        location.reload(true);
                     }
                 })
                 .fail(errorHandler);
@@ -116,6 +108,7 @@
                     } else {
                         alert("新用户必须填写邀请码");
                         $(".input-group").css("display", "flex");
+                        enableBtn();
                     }
                 })
                 .fail(errorHandler)

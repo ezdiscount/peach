@@ -30,7 +30,7 @@ class Gateway
         $user = new SqlMapper('user');
         $user->load(['fid=?', $fid]);
         if (!$user->dry()) {
-            $token = $this->cacheToken($f3, $user);
+            $token = $this->cacheToken($f3, $user->cast());
             echo json_encode($f3->get($token), JSON_UNESCAPED_UNICODE);
         } else {
             echo 'failed';
@@ -43,21 +43,25 @@ class Gateway
         $nickname = $f3->get('POST.name');
         $referral = $f3->get('POST.referral');
         $f3->clear('POST.referral');
-        $user = new SqlMapper('user');
-        $user->load(['fid=?', $fid]);
-        if ($user->dry()) {
-            $user['affiliate'] = StringUtils::generateAffiliate();
-            $user['referral'] = $referral;
-            $user['nickname'] = $nickname;
-            $user['facebook'] = json_encode($f3->get('POST'), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-            $user['update_time'] = date('Y-m-d H:i:s');
-            $user->save();
-            // TODO: trigger user plan check
-            $token = $this->cacheToken($f3, $user);
-            echo json_encode($f3->get($token), JSON_UNESCAPED_UNICODE);
+        $mentor = new SqlMapper('user');
+        $mentor->load(['affiliate=?', $referral]);
+        if ($mentor->dry()) {
+            echo 'invalid_referral';
         } else {
-            $this->logger->write("user (fid: $fid) already existed");
-            echo 'failed';
+            $user = new SqlMapper('user');
+            $user->load(['fid=?', $fid]);
+            if ($user->dry()) {
+                $user['affiliate'] = StringUtils::generateAffiliate();
+                $user['nickname'] = $nickname;
+                $user['facebook'] = json_encode($f3->get('POST'), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                $user['update_time'] = date('Y-m-d H:i:s');
+                $user->save();
+                // TODO: trigger user plan check
+            } else {
+                $this->logger->write("user (fid: $fid) already existed");
+            }
+            $token = $this->cacheToken($f3, $user->cast());
+            echo json_encode($f3->get($token), JSON_UNESCAPED_UNICODE);
         }
     }
 
@@ -73,10 +77,10 @@ class Gateway
         }
     }
 
-    function cacheToken(\Base $f3, SqlMapper $user)
+    function cacheToken(\Base $f3, array $user)
     {
         $token = StringUtils::generateToken();
-        $f3->set($token, array_merge(['token' => $token], $user->cast()), self::TOKEN_CACHE_TIME);
+        $f3->set($token, array_merge(['token' => $token], $user), self::TOKEN_CACHE_TIME);
         return $token;
     }
 
