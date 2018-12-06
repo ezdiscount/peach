@@ -15,8 +15,8 @@ class Data
         $pageSize = $this->defaultPageSize;
         $pageNo = intval($args['pageNo']) ?? 0;
         $affiliate = Helper::getDomain();
-        $filter = ['affiliate=? AND status=1 AND couponEnd>?', $affiliate, date('Y-m-d')];
-        $mapper = new SqlMapper('product_raw');
+        $filter = ['affiliate=? AND status=1 AND expire_date>?', $affiliate, date('Y-m-d')];
+        $mapper = new SqlMapper('product');
         $pageTotal = ceil($mapper->count($filter, null, $this->defaultCacheTime) / $pageSize);
         $data = [];
         if ($pageNo >= 1 && $pageNo <= $pageTotal) {
@@ -31,9 +31,9 @@ class Data
                     'thumb' => $item['thumb'],
                     'title' => $item['title'],
                     'reservePrice' => sprintf('%.2f', $item['price'] / 100),
-                    'coupon' => sprintf('%.2f', $item['couponValue'] / 100),
-                    'price' => sprintf("%.2f", ($item['price'] - $item['couponValue']) / 100),
-                    'url' => $item['couponShortUrl'],
+                    'coupon' => sprintf('%.2f', $item['coupon'] / 100),
+                    'price' => sprintf("%.2f", ($item['price'] - $item['coupon']) / 100),
+                    'url' => $item['url'],
                 ];
             }
         } else {

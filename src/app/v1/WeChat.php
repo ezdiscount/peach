@@ -10,7 +10,7 @@ class WeChat
     function simple($f3)
     {
         $id = $f3->get('PARAMS.id');
-        $mapper = new SqlMapper('product_raw');
+        $mapper = new SqlMapper('product');
         $mapper->load(['id=?', $id]);
         if ($mapper->dry()) {
             $f3->error(404, 'NO PRODUCT');

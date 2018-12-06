@@ -4,8 +4,8 @@ namespace app;
 
 use app\common\AppHelper;
 use PhpOffice\PhpSpreadsheet\Exception;
-use service\ProductRawData;
-use service\ProductRawDataHC;
+use product\parser\ProductHC;
+use product\parser\ProductNC;
 
 class Upload extends \Web
 {
@@ -56,9 +56,9 @@ class Upload extends \Web
             try {
                 $type = $f3->POST['type'] ?? 0;
                 if ($type == 0) {
-                    $result = ProductRawData::parse($f3->UPLOADS . $this->fileName);
+                    $result = ProductNC::parse($f3->UPLOADS . $this->fileName);
                 } else if ($type == 1) {
-                    $result = ProductRawDataHC::parse($f3->UPLOADS . $this->fileName);
+                    $result = ProductHC::parse($f3->UPLOADS . $this->fileName);
                 } else {
                     $result = [
                         'code' => -1,

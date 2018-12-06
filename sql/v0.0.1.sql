@@ -48,4 +48,4 @@ CREATE TABLE product_raw (
   groupEnd TIMESTAMP NOT NULL DEFAULT '2018-01-01'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 CREATE INDEX index_product_affiliate ON product_raw (affiliate);
-CREATE UNIQUE INDEX index_product_affiliate_pid ON product_raw (affiliate, tid);
+CREATE UNIQUE INDEX index_product_affiliate_tid ON product_raw (affiliate, tid);

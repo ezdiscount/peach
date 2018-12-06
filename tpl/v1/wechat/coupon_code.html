@@ -45,14 +45,14 @@
 <div class="card">
     <img class="card-img-top" src="{{@thumb}}">
     <div class="card-header">
-        <i class="fa fa-rmb text-danger">&nbsp;<span>{{(@price - @couponValue) / 100}}</span></i>
+        <i class="fa fa-rmb text-danger">&nbsp;<span>{{(@price - @coupon) / 100}}</span></i>
         <p class="reserve-price">价格&nbsp;￥{{@price / 100}}</p>
     </div>
     <div class="card-body">
         <p class="card-text">{{@title}}</p>
-        <p class="card-text">折扣价￥{{@price / 100}}&nbsp;领券再减{{@couponValue / 100}}元</p>
+        <p class="card-text">折扣价￥{{@price / 100}}&nbsp;领券再减{{@coupon / 100}}元</p>
         <p class="card-text text-danger">复制领券码&nbsp;<i class="fa fa-hand-o-down"></i>&nbsp;打开淘宝App</p>
-        <p class="card-text text-danger text-code">{{@couponCode}}</p>
+        <p class="card-text text-danger text-code">{{@code}}</p>
     </div>
     <button class="btn btn-danger" data-clipboard-action="copy" data-clipboard-target=".card-body">一键复制</button>
 </div>
