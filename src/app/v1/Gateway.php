@@ -2,7 +2,9 @@
 
 namespace app\v1;
 
+use db\Mysql;
 use db\SqlMapper;
+use service\Rabbit;
 use service\StringUtils;
 
 class Gateway
@@ -39,6 +41,8 @@ class Gateway
 
     function createUser(\Base $f3)
     {
+        $db = Mysql::instance()->get();
+        $db->begin();
         $fid = $f3->get('POST.id');
         $nickname = $f3->get('POST.name');
         $referral = $f3->get('POST.referral');
@@ -56,25 +60,26 @@ class Gateway
                 $user['facebook'] = json_encode($f3->get('POST'), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
                 $user['update_time'] = date('Y-m-d H:i:s');
                 $user->save();
-                // TODO: trigger user plan check
+                $message = json_encode([
+                    'event' => 'create_user',
+                    'user' => $user['id'],
+                    'user_plan' => 0,
+                    'mentor' => $mentor['id'],
+                    'mentor_plan' => $mentor['plan'],
+                ], JSON_UNESCAPED_UNICODE);
+                $task = new SqlMapper('task');
+                $task['name'] = 'create_user';
+                $task['data'] = $message;
+                $task->save();
+                $this->logger->write("[event][create_user][$message]");
+                Rabbit::send('peachExchange', $message);
             } else {
                 $this->logger->write("user (fid: $fid) already existed");
             }
             $token = $this->cacheToken($f3, $user->cast());
             echo json_encode($f3->get($token), JSON_UNESCAPED_UNICODE);
         }
-    }
-
-    function validateReferral(\Base $f3)
-    {
-        $referral = $f3->get('POST.referral');
-        $user = new SqlMapper('user');
-        $user->load(['affiliate=?', $referral]);
-        if ($user->dry()) {
-            echo 'failed';
-        } else {
-            echo 'success';
-        }
+        $db->commit();
     }
 
     function cacheToken(\Base $f3, array $user)

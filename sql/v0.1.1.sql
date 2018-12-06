@@ -65,3 +65,13 @@ create table quota (
   margin int not null default 0 comment 'budget-buyer_earning-father_earning-grandpa_earning-chain_a_earning-chain_b_earning-super_earning',
   primary key (id)
 ) comment '所有金额单位为人民币分:1表示0.01元;100表示1元';
+
+drop table if exists task;
+create table task (
+  id int unsigned primary key auto_increment,
+  name varchar(50) not null default '' comment 'event:create_user|',
+  data json,
+  status tinyint(1) not null default 0 comment '0:init;1:success;2:failure.发送通知rmq处理init状态,scheduler只处理failure状态',
+  create_time timestamp not null default current_timestamp,
+  index idx_task_name (name)
+);
