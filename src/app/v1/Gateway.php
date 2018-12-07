@@ -60,17 +60,18 @@ class Gateway
                 $user['facebook'] = json_encode($f3->get('POST'), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
                 $user['update_time'] = date('Y-m-d H:i:s');
                 $user->save();
-                $message = json_encode([
+                $data = [
                     'event' => 'create_user',
                     'user' => $user['id'],
                     'user_plan' => 0,
                     'mentor' => $mentor['id'],
                     'mentor_plan' => $mentor['plan'],
-                ], JSON_UNESCAPED_UNICODE);
+                ];
                 $task = new SqlMapper('task');
                 $task['name'] = 'create_user';
-                $task['data'] = $message;
+                $task['data'] = json_encode($data, JSON_UNESCAPED_UNICODE);
                 $task->save();
+                $message = json_encode(array_merge(['task' => $task['id']], $data), JSON_UNESCAPED_UNICODE);
                 $this->logger->write("[event][create_user][$message]");
                 Rabbit::send('peachExchange', $message);
             } else {
