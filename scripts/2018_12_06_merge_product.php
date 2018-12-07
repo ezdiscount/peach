@@ -1,10 +1,6 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: jibo
- * Date: 2018-12-06
- * Time: 17:23
- */
+
+die("out of date\n");
 
 use db\SqlMapper;
 
