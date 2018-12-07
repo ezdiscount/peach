@@ -1,51 +1,51 @@
-DROP TABLE IF EXISTS admin;
-CREATE TABLE admin (
-  id int(20) unsigned NOT NULL AUTO_INCREMENT,
-  username VARCHAR(100) NOT NULL,
-  password VARCHAR(100) NOT NULL,
-  email VARCHAR(100) NOT NULL DEFAULT '',
-  mobile VARCHAR(100) NOT NULL DEFAULT '',
-  status tinyint(1) NOT NULL DEFAULT 0 COMMENT '0:disabled,1:enabled',
-  create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY(ID)
+drop table if exists admin;
+create table admin (
+  id int(20) unsigned not null auto_increment,
+  username varchar(100) not null,
+  password varchar(100) not null,
+  email varchar(100) not null default '',
+  mobile varchar(100) not null default '',
+  status tinyint(1) not null default 0 comment '0:disabled;1:enabled',
+  create_time timestamp not null default current_timestamp,
+  primary key (id),
+  unique index idx_admin_username (username)
 );
-CREATE UNIQUE INDEX index_admin_username ON admin (username);
 
-DROP TABLE if exists product_raw;
-CREATE TABLE product_raw (
-  id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-  affiliate VARCHAR(100) NOT NULL DEFAULT 'www',
-  status TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0:pending,1:ready,2:remove',
-  weight INT UNSIGNED NOT NULL DEFAULT 0,
-  create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+drop table if exists product_raw;
+create table product_raw (
+  id int unsigned primary key auto_increment,
+  affiliate varchar(100) not null default 'www',
+  status tinyint(1) not null default 0 comment '0:pending;1:ready;2:remove',
+  weight int unsigned not null default 0,
+  create_time timestamp not null default CURRENT_TIMESTAMP,
   # from excel:
-  tid BIGINT NOT NULL DEFAULT 0,
-  title VARCHAR(500) NOT NULL DEFAULT '',
-  thumb VARCHAR(1000) NOT NULL DEFAULT '',
-  detailUrl VARCHAR(1000) NOT NULL DEFAULT '',
-  store VARCHAR(100) NOT NULL DEFAULT '',
-  price INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '人民币分',
-  saleVolume INT UNSIGNED NOT NULL DEFAULT 0,
-  commissionRate TINYINT(2) UNSIGNED NOT NULL DEFAULT 0 COMMENT '百分数值，1代表1%',
-  commissionValue INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '人民币分',
-  sellerWaWa VARCHAR(100) NOT NULL DEFAULT '',
-  tkShortUrl VARCHAR(100) NOT NULL DEFAULT '',
-  tkUrl VARCHAR(1000) NOT NULL DEFAULT '',
-  tkCode VARCHAR(100) NOT NULL DEFAULT '',
-  couponTotal INT UNSIGNED NOT NULL DEFAULT 0,
-  couponAvailable INT UNSIGNED NOT NULL DEFAULT 0,
-  couponValue VARCHAR(100) NOT NULL DEFAULT '',
-  couponStart TIMESTAMP NOT NULL DEFAULT '2018-01-01',
-  couponEnd  TIMESTAMP NOT NULL DEFAULT '2018-01-01',
-  couponUrl VARCHAR(1000) NOT NULL DEFAULT '',
-  couponCode VARCHAR(100) NOT NULL DEFAULT '',
-  couponShortUrl VARCHAR(100) NOT NULL DEFAULT '',
-  isRecommend TINYINT(1) NOT NULL DEFAULT 0,
-  groupThresh INT UNSIGNED NOT NULL DEFAULT 0,
-  groupPrice INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '人民币分',
-  groupCommission INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '人民币分',
-  groupStart TIMESTAMP NOT NULL DEFAULT '2018-01-01',
-  groupEnd TIMESTAMP NOT NULL DEFAULT '2018-01-01'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-CREATE INDEX index_product_affiliate ON product_raw (affiliate);
-CREATE UNIQUE INDEX index_product_affiliate_tid ON product_raw (affiliate, tid);
+  tid bigint not null default 0,
+  title varchar(500) not null default '',
+  thumb varchar(1000) not null default '',
+  detailUrl varchar(1000) not null default '',
+  store varchar(100) not null default '',
+  price int unsigned not null default 0 comment '人民币分',
+  saleVolume int unsigned not null default 0,
+  commissionRate tinyint(2) unsigned not null default 0 comment '百分数值:1代表1%',
+  commissionValue int unsigned not null default 0 comment '人民币分',
+  sellerWaWa varchar(100) not null default '',
+  tkShortUrl varchar(100) not null default '',
+  tkUrl varchar(1000) not null default '',
+  tkCode varchar(100) not null default '',
+  couponTotal int unsigned not null default 0,
+  couponAvailable int unsigned not null default 0,
+  couponValue varchar(100) not null default '',
+  couponStart timestamp not null default '2018-01-01',
+  couponEnd  timestamp not null default '2018-01-01',
+  couponUrl varchar(1000) not null default '',
+  couponCode varchar(100) not null default '',
+  couponShortUrl varchar(100) not null default '',
+  isRecommend tinyint(1) not null default 0,
+  groupThresh int unsigned not null default 0,
+  groupPrice int unsigned not null default 0 comment '人民币分',
+  groupCommission int unsigned not null default 0 comment '人民币分',
+  groupStart timestamp not null default '2018-01-01',
+  groupEnd timestamp not null default '2018-01-01'
+) engine=InnoDB default charset=utf8mb4 collate=utf8mb4_unicode_ci;
+create index index_product_affiliate ON product_raw (affiliate);
+create unique index index_product_affiliate_tid ON product_raw (affiliate, tid);

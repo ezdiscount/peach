@@ -1,1 +1,1 @@
-ALTER TABLE product_raw ADD COLUMN hc TINYINT(1) DEFAULT 1;
+alter table product_raw add column hc tinyint(1) default 1;

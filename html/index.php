@@ -1,5 +1,7 @@
 <?php
 
+use service\Rabbit;
+
 define('HTML', __DIR__);
 define('ROOT', dirname(HTML));
 define('RUNTIME', ROOT . '/runtime');
@@ -10,11 +12,17 @@ Prometheus\Storage\Redis::setDefaultOptions([
     'host' => 'redis',
 ]);
 
-call_user_func(function ($f3) {
+function shutdown()
+{
+    Rabbit::shutdown();
+}
+
+call_user_func(function (Base $f3) {
     $sysDirs = [
         'logs' => ROOT . '/runtime/logs/',
         'uploads' => ROOT . '/runtime/uploads/',
     ];
+
     foreach ($sysDirs as $dir) {
         if (!is_dir($dir)) {
             mkdir($dir, Base::MODE, true);
@@ -27,6 +35,7 @@ call_user_func(function ($f3) {
         ROOT . '/cfg/route.ini,' .
         ROOT . '/cfg/debug.ini'
     );
+
     $f3->mset([
         'AUTOLOAD' => ROOT . '/src/',
         'LOCALES' => ROOT . '/dict/',
@@ -34,19 +43,24 @@ call_user_func(function ($f3) {
         'UI' => ROOT . '/tpl/',
         'UPLOADS' => $sysDirs['uploads'],
     ]);
+
     if ($f3->AJAX) {
         $f3->ONERROR = function ($f3) {
+            shutdown();
             echo json_encode(['error' => $f3->ERROR], JSON_UNESCAPED_UNICODE);
         };
     } else {
         if (!$f3->DEBUG) {
             $f3->ONERROR = function () {
+                shutdown();
                 echo Template::instance()->render('error.html');
             };
         }
     }
 
     $f3->LOGGER = new Log(date('Y-m-d.\l\o\g'));
+
+    $f3->UNLOAD = 'shutdown';
 
     if (PHP_SAPI != 'cli') {
         $f3->run();

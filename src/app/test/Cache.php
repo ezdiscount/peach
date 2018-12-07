@@ -16,9 +16,13 @@ class Cache
 
     function get($f3)
     {
-        echo $f3->CACHE, PHP_EOL;
+        echo 'f3 cache engine:', $f3->CACHE, PHP_EOL;
         $name = $_GET['name'] ?? false;
-        echo ($name === false) ? 'false' : $f3->get($name);
+        if ($name === false) {
+            echo 'miss name';
+        } else {
+            var_dump($f3->get($name));
+        }
     }
 
     function flushRedis($f3)
