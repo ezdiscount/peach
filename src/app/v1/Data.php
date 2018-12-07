@@ -15,7 +15,11 @@ class Data
         $pageSize = $this->defaultPageSize;
         $pageNo = intval($args['pageNo']) ?? 0;
         $affiliate = Helper::getDomain();
-        $filter = ['affiliate=? AND status=1 AND expire_date>?', $affiliate, date('Y-m-d')];
+        if ($affiliate == 'www') {
+            $filter = ['status=1 AND expire_date>?', date('Y-m-d')];
+        } else {
+            $filter = ['affiliate=? AND status=1 AND expire_date>?', $affiliate, date('Y-m-d')];
+        }
         $mapper = new SqlMapper('product');
         $pageTotal = ceil($mapper->count($filter, null, $this->defaultCacheTime) / $pageSize);
         $data = [];
