@@ -5,8 +5,6 @@ namespace product\parser;
 use app\metrics\Helper;
 use db\Mysql;
 use db\SqlMapper;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Reader\Xls;
 
 /**
  * Class ProductHC
@@ -17,7 +15,7 @@ use PhpOffice\PhpSpreadsheet\Reader\Xls;
  */
 class ProductHC
 {
-    const HEADER_HC = [
+    const HEADER = [
         '0' => '商品id',
         '1' => '商品名称',
         '2' => '商品主图',
@@ -67,48 +65,9 @@ class ProductHC
         '25' => 'couponShortUrl',
     ];
 
-    /**
-     * @param $file : absolute path of excel
-     * @see html/img/data_format.png
-     * @return array [code, reason]
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
-     */
-    static function parse($file)
+    static function parse(array $raw) : int
     {
-        $logger = \Base::instance()->LOGGER;
-        $logger->write("parse: $file");
-        $suffix = pathinfo($file, PATHINFO_EXTENSION);
-        if ($suffix === 'xls') {
-            $reader = new Xls();
-            $spreadsheet = $reader->load($file);
-        } else if ($suffix === 'xlsx') {
-            $spreadsheet = IOFactory::load($file);
-        } else {
-            $logger->write("Unsupported file type: $suffix");
-            return [
-                'code' => -1,
-                'reason' => "Unsupported file type: $suffix"
-            ];
-        }
-        $raw = $spreadsheet->getActiveSheet()->toArray();
-        if (self::HEADER_HC === $raw[0]) {
-            unset($raw[0]);
-            self::raw2Database($raw);
-        } else {
-            ob_start();
-            var_dump($raw[0]);
-            $logger->write('Unsupported file header:');
-            $logger->write(ob_get_clean());
-            return [
-                'code' => -1,
-                'reason' => "Unsupported file header"
-            ];
-        }
-        return ['code' => 0];
-    }
-
-    static function raw2Database($raw)
-    {
+        unset($raw[0]);
         $db = Mysql::instance()->get();
         $db->begin();
         $header = array_flip(self::HEADER_MAP);
@@ -121,7 +80,6 @@ class ProductHC
             $affiliate = Helper::getDomain();
             $mapper->load(['affiliate=? AND tid=?', $affiliate, $tid]);
             $mapper['affiliate'] = $affiliate;
-            $mapper['hc'] = 1;
             $mapper['status'] = 1;
             $mapper['create_time'] = date('Y-m-d H:i:s');
             $price = Utils::calcPriceWithCoupon($row[$header['price']], $row[$header['couponValue']]);
@@ -138,5 +96,6 @@ class ProductHC
             $mapper->save();
         }
         $db->commit();
+        return 0;
     }
 }

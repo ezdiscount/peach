@@ -3,9 +3,9 @@
 namespace app;
 
 use app\common\AppHelper;
-use PhpOffice\PhpSpreadsheet\Exception;
 use product\parser\ProductHC;
 use product\parser\ProductNC;
+use product\parser\Utils;
 
 class Upload extends \Web
 {
@@ -13,7 +13,7 @@ class Upload extends \Web
 
     private $fileName;
 
-    function beforeRoute($f3)
+    function beforeRoute(\Base $f3)
     {
         if (!$this->auth($f3)) {
             $f3->reroute($this->url('/Login'));
@@ -35,7 +35,7 @@ class Upload extends \Web
         }
     }
 
-    function get($f3)
+    function get(\Base $f3)
     {
         if (empty($this->fileName)) {
             echo \Template::instance()->render("upload.html");
@@ -49,35 +49,29 @@ class Upload extends \Web
         }
     }
 
-    function upload($f3)
+    function upload(\Base $f3)
     {
+        $result = [
+            'code' => -1,
+            'reason' => 'undefined',
+        ];
         $receive = $this->receive(null, true, false);
         if ($receive) {
-            try {
-                $type = $f3->POST['type'] ?? 0;
-                if ($type == 0) {
-                    $result = ProductNC::parse($f3->UPLOADS . $this->fileName);
-                } else if ($type == 1) {
-                    $result = ProductHC::parse($f3->UPLOADS . $this->fileName);
+            $data = Utils::load($f3->UPLOADS . $this->fileName);
+            if ($data !== false) {
+                if ($data[0] == ProductNC::HEADER) {
+                    $result['code'] = ProductNC::parse($data);
+                } else if ($data[0] == ProductHC::HEADER) {
+                    $result['code'] = ProductHC::parse($data);
                 } else {
-                    $result = [
-                        'code' => -1,
-                        'reason' => "Unsupported parameter type=$type",
-                    ];
+                    $result['reason'] = "Unknown file header";
                 }
-                if ($result['code'] === 0) {
-                    echo "success";
-                } else {
-                    echo $result['reason'];
-                }
-            } catch (Exception $e) {
-                ob_start();
-                var_dump($e);
-                $f3->LOGGER->write(ob_get_clean());
-                echo $e->getMessage();
+            } else {
+                $result['reason'] = "Load file error";
             }
         } else {
-            echo "upload error";
+            $result['reason'] = "Upload file error";
         }
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
     }
 }

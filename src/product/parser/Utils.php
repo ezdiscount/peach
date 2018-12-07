@@ -2,8 +2,25 @@
 
 namespace product\parser;
 
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 class Utils
 {
+    static function load($file)
+    {
+        $logger = new \Log(date('Y-m-d.\l\o\g'));
+        $logger->write("loading file: $file");
+        try {
+            $spreadsheet = IOFactory::load($file);
+            return $spreadsheet->getActiveSheet()->toArray();
+        } catch (\Exception $e) {
+            $logger->write("loading error: $file");
+            ob_start();
+            var_dump($e);
+            $logger->write(ob_get_clean());
+            return false;
+        }
+    }
 
     /**
      * @param $price
