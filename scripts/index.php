@@ -8,5 +8,9 @@ call_user_func(function (Base $f3) {
     $f3->mset([
         'AUTOLOAD' => ROOT . '/src/',
         'LOGS' => ROOT . '/runtime/logs/',
-    ]);    $f3->config(ROOT . '/cfg/system.ini,' . ROOT . '/cfg/debug.ini');
+    ]);
+    $f3->config([
+        ROOT . '/cfg/system.ini',
+        ROOT . '/cfg/debug.ini',
+    ]);
 }, Base::instance());
